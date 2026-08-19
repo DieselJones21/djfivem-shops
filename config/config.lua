@@ -27,6 +27,12 @@ Config.Money = {
 -- Image path for catalog icons. `%s` is replaced with the item image file.
 Config.ImagePath = 'nui://ox_inventory/web/images/%s'
 
+-- Logo file inside html/ (png, svg, or jpg). Send a logo and drop it in as html/logo.png,
+-- or keep the default mark.
+Config.Branding = {
+    logo = 'logo.svg',
+}
+
 -- Hide shop items that are not registered in ox_inventory (recommended).
 Config.HideMissingItems = true
 
@@ -51,6 +57,7 @@ Config.Locale = {
     too_far = 'You walked away from the shop.',
     empty_cart = 'Your cart is empty.',
     cannot_carry = 'You cannot carry that many items.',
+    inventory_full = 'Your inventory is full.',
     not_enough_cash = 'You do not have enough cash.',
     not_enough_bank = 'You do not have enough bank balance.',
     not_enough_black = 'You do not have enough dirty money.',

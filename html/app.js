@@ -62,6 +62,23 @@ function cartCount() {
     return cartEntries().reduce((sum, line) => sum + line.count, 0);
 }
 
+function setLogo(logo) {
+    const image = document.getElementById('brandLogo');
+    const fallback = document.getElementById('brandMark');
+    const src = logo || 'logo.svg';
+    image.classList.add('hidden');
+    fallback.classList.remove('hidden');
+    image.onload = () => {
+        image.classList.remove('hidden');
+        fallback.classList.add('hidden');
+    };
+    image.onerror = () => {
+        image.classList.add('hidden');
+        fallback.classList.remove('hidden');
+    };
+    image.src = src;
+}
+
 function closeUi() {
     app.classList.add('hidden');
     app.setAttribute('aria-hidden', 'true');
@@ -282,8 +299,10 @@ function openUi(data) {
 
     document.getElementById('shopName').textContent = data.shop.label;
     document.getElementById('shopSubtitle').textContent = data.shop.location || data.shop.subtitle || 'Store';
-    document.getElementById('brandMark').textContent = data.shop.label.slice(0, 2).toUpperCase();
+    document.getElementById('brandMark').textContent = (data.resourceLabel || data.shop.label).slice(0, 2).toUpperCase();
+    document.getElementById('resourceLabel').textContent = data.resourceLabel || 'DJ Shops';
     document.getElementById('closeHint').textContent = data.closeHint || 'ESC (Close Shop)';
+    setLogo(data.logo);
 
     setPlayer(data.player);
     renderTabs();

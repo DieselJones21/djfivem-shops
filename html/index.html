@@ -11,90 +11,97 @@
 </head>
 <body>
     <div id="app" class="hidden" aria-hidden="true">
-        <div class="shell">
-            <header class="topbar">
-                <div class="brand">
-                    <div class="brand-mark" id="brandMark">24</div>
-                    <div>
-                        <h1 id="shopName">Shop</h1>
-                        <p id="shopSubtitle">Store</p>
-                    </div>
-                </div>
-
-                <nav class="tabs" id="tabs"></nav>
-
-                <div class="profile">
-                    <div class="profile-text">
-                        <strong id="playerName">Customer</strong>
-                        <span>Customer</span>
-                    </div>
-                    <div class="avatar" id="avatar">C</div>
-                </div>
-            </header>
-
-            <section class="stats">
-                <article class="stat-card">
-                    <span class="stat-label">Cash On Hand</span>
-                    <strong id="statCash">$0</strong>
-                    <span class="stat-pill">Wallet</span>
-                </article>
-                <article class="stat-card">
-                    <span class="stat-label">Bank Balance</span>
-                    <strong id="statBank">$0</strong>
-                    <span class="stat-pill">Account</span>
-                </article>
-                <article class="stat-card">
-                    <span class="stat-label">Cart Total</span>
-                    <strong id="statCart">$0</strong>
-                    <span class="stat-pill" id="cartCountPill">0 items</span>
-                </article>
-            </section>
-
-            <section class="workspace">
-                <div class="catalog-panel">
-                    <div class="panel-head">
-                        <div>
-                            <h2>Catalog</h2>
-                            <p id="categoryHint">Browse available products</p>
+        <div class="tablet">
+            <div class="tablet-screen">
+                <header class="status">
+                    <div class="brand">
+                        <div class="logo-wrap">
+                            <img id="brandLogo" class="brand-logo hidden" alt="Shop logo" />
+                            <div id="brandMark" class="brand-mark">DJ</div>
                         </div>
-                        <div class="head-actions">
-                            <label class="search">
-                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0-2a8 8 0 1 0 4.9 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0 0 10 2z"/></svg>
-                                <input id="search" type="search" placeholder="Search items" autocomplete="off" />
-                            </label>
-                            <div class="pills" id="paymentPills"></div>
+                        <div class="brand-copy">
+                            <span id="resourceLabel">DJ Shops</span>
+                            <h1 id="shopName">Shop</h1>
+                            <p id="shopSubtitle">Store</p>
                         </div>
                     </div>
-                    <div class="grid" id="grid"></div>
-                    <p class="empty hidden" id="empty">No items in this category.</p>
-                </div>
 
-                <aside class="cart-panel">
-                    <div class="panel-head">
-                        <div>
-                            <h2>Cart</h2>
-                            <p>Review and checkout</p>
-                        </div>
-                    </div>
-                    <div class="cart-list" id="cartList"></div>
-                    <p class="empty" id="cartEmpty">Your cart is empty.</p>
-                    <div class="checkout">
-                        <div class="checkout-row">
-                            <span>Method</span>
-                            <strong id="methodLabel">Cash</strong>
-                        </div>
-                        <div class="checkout-row total">
-                            <span>Total</span>
-                            <strong id="checkoutTotal">$0</strong>
-                        </div>
-                        <button id="checkoutBtn" class="buy-btn" type="button" disabled>Checkout</button>
-                    </div>
-                </aside>
-            </section>
+                    <nav class="tabs" id="tabs"></nav>
 
-            <footer class="hint">
-                <span id="closeHint">ESC (Close Shop)</span>
-            </footer>
+                    <div class="profile">
+                        <div class="profile-text">
+                            <strong id="playerName">Customer</strong>
+                            <span>Customer</span>
+                        </div>
+                        <div class="avatar" id="avatar">C</div>
+                    </div>
+                </header>
+
+                <section class="stats">
+                    <article class="stat-card">
+                        <span class="stat-label">Cash</span>
+                        <strong id="statCash">$0</strong>
+                        <span class="stat-pill">Wallet</span>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Bank</span>
+                        <strong id="statBank">$0</strong>
+                        <span class="stat-pill">Account</span>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Cart</span>
+                        <strong id="statCart">$0</strong>
+                        <span class="stat-pill" id="cartCountPill">0 items</span>
+                    </article>
+                </section>
+
+                <section class="workspace">
+                    <div class="catalog-panel">
+                        <div class="panel-head">
+                            <div>
+                                <h2>Catalog</h2>
+                                <p id="categoryHint">Browse available products</p>
+                            </div>
+                            <div class="head-actions">
+                                <label class="search">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0-2a8 8 0 1 0 4.9 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0 0 10 2z"/></svg>
+                                    <input id="search" type="search" placeholder="Search" autocomplete="off" />
+                                </label>
+                                <div class="pills" id="paymentPills"></div>
+                            </div>
+                        </div>
+                        <div class="grid" id="grid"></div>
+                        <p class="empty hidden" id="empty">No items in this category.</p>
+                    </div>
+
+                    <aside class="cart-panel">
+                        <div class="panel-head">
+                            <div>
+                                <h2>Cart</h2>
+                                <p>Review and pay</p>
+                            </div>
+                        </div>
+                        <div class="cart-list" id="cartList"></div>
+                        <p class="empty" id="cartEmpty">Your cart is empty.</p>
+                        <div class="checkout">
+                            <div class="checkout-row">
+                                <span>Method</span>
+                                <strong id="methodLabel">Cash</strong>
+                            </div>
+                            <div class="checkout-row total">
+                                <span>Total</span>
+                                <strong id="checkoutTotal">$0</strong>
+                            </div>
+                            <button id="checkoutBtn" class="buy-btn" type="button" disabled>Checkout</button>
+                        </div>
+                    </aside>
+                </section>
+
+                <footer class="hint">
+                    <span id="closeHint">ESC (Close Shop)</span>
+                    <div class="home-bar" aria-hidden="true"></div>
+                </footer>
+            </div>
         </div>
     </div>
     <script src="app.js"></script>

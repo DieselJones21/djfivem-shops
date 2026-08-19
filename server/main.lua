@@ -211,6 +211,16 @@ local function oxItem(name)
     return items[name] or items[name:lower()] or items[name:upper()]
 end
 
+local function carryError(response)
+    if response == 'inventory_full' then
+        return Config.Locale.inventory_full
+    end
+    if response == 'invalid_item' then
+        return Config.Locale.missing_item_def
+    end
+    return Config.Locale.cannot_carry
+end
+
 local function imageFile(name, data)
     if data and data.client and data.client.image then
         return data.client.image
@@ -284,6 +294,8 @@ lib.callback.register('djshops:openShop', function(source, shopId, locationIndex
         items = items,
         maxQuantity = Config.MaxQuantity,
         closeHint = Config.CloseHint,
+        logo = Config.Branding and Config.Branding.logo or 'logo.svg',
+        resourceLabel = Config.ResourceLabel,
     }
 end)
 
@@ -356,17 +368,15 @@ lib.callback.register('djshops:checkout', function(source, payload)
             return { ok = false, error = Config.Locale.missing_item_def }
         end
 
+        local itemName = data.name or product.name
+
         if product.license and not hasLicense(player, fw, product.license) then
             return { ok = false, error = Config.Locale.missing_license }
         end
 
-        if not exports.ox_inventory:CanCarryItem(source, product.name, count, product.metadata) then
-            return { ok = false, error = Config.Locale.cannot_carry }
-        end
-
         total = total + (product.price * count)
         order[#order + 1] = {
-            name = product.name,
+            name = itemName,
             count = count,
             metadata = product.metadata,
         }
@@ -404,7 +414,7 @@ lib.callback.register('djshops:checkout', function(source, payload)
     local given = {}
     for i = 1, #order do
         local line = order[i]
-        local success = exports.ox_inventory:AddItem(source, line.name, line.count, line.metadata)
+        local success, response = exports.ox_inventory:AddItem(source, line.name, line.count, line.metadata)
         if not success then
             for g = 1, #given do
                 exports.ox_inventory:RemoveItem(source, given[g].name, given[g].count, given[g].metadata)
@@ -416,7 +426,7 @@ lib.callback.register('djshops:checkout', function(source, payload)
             else
                 addBlack(source, total)
             end
-            return { ok = false, error = Config.Locale.cannot_carry }
+            return { ok = false, error = carryError(response) }
         end
         given[#given + 1] = line
     end

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="DJ Shops">
+  <rect width="128" height="128" rx="32" fill="#e11d2e"/>
+  <rect x="6" y="6" width="116" height="116" rx="26" fill="none" stroke="#fff" stroke-width="3"/>
+  <path fill="#fff" d="M40 52c0-13.3 10.7-24 24-24s24 10.7 24 24v6h8.5c2.5 0 4.5 2.2 4.3 4.7l-3.2 42c-.2 2.5-2.3 4.3-4.8 4.3H35.2c-2.5 0-4.6-1.8-4.8-4.3l-3.2-42c-.2-2.5 1.8-4.7 4.3-4.7H40v-6zm12 0v6h24v-6c0-6.6-5.4-12-12-12s-12 5.4-12 12z"/>
+</svg>

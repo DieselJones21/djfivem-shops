@@ -27,6 +27,10 @@ files {
     'html/index.html',
     'html/style.css',
     'html/app.js',
+    'html/*.svg',
+    'html/*.png',
+    'html/*.jpg',
+    'html/*.webp',
 }
 
 dependencies {

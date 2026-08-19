@@ -75,6 +75,18 @@ I('WEAPON_APPISTOL', 4500, 'pistols', { license = 'weapon', metadata = { registe
 
 Images load from `nui://ox_inventory/web/images/`. Change `Config.ImagePath` if your icons live somewhere else.
 
+## Branding
+
+Drop a logo in `html/logo.png` (or `.svg` / `.jpg`) and set it in `config/config.lua`:
+
+```lua
+Config.Branding = {
+    logo = 'logo.png',
+}
+```
+
+You can also send a logo here and it will be wired in.
+
 ## Config extras
 
 - Move peds by editing `locations` `vector4(x, y, z, heading)`.
