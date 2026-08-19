@@ -6,19 +6,19 @@ Ped-based shops for **ox_inventory** with a red/black dashboard UI, **cash or ba
 
 | Shop | What it sells | Locations |
 | --- | --- | --- |
-| 24/7 | Food, drinks, snacks, lighter, papers, basic bandage | All vanilla 24/7 clerks |
-| LTD Gasoline | Same everyday stock as 24/7 | Grove, Little Seoul, Richman, Mirror Park, Grapeseed |
-| Rob's Liquor | Beer, spirits, wine | All Rob's Liquor clerks |
-| Ammunation | Melee, licensed pistols, ammo, armor | All 11 Ammunation clerks |
-| YouTool | Tools, repair kits, hardware | Davis, Harmony, Paleto |
-| Digital Den | Phones, radios, laptops, electronics | Legion, Mirror Park, Rockford, Little Seoul |
-| Pharmacy | First aid and medicine | Pillbox, Vinewood, Sandy, Paleto |
-| The Backroom | Robbery / heist supplies | Hidden peds, no blip |
-| Street Chemist | Drug packaging, grow supplies, product | Hidden peds, no blip |
+| 24/7 | `sandwich`, `water`, `ecola` | All vanilla 24/7 clerks |
+| LTD Gasoline | `sandwich`, `water`, `ecola` | Grove, Little Seoul, Richman, Mirror Park, Grapeseed |
+| Rob's Liquor | `sandwich`, `water`, `ecola` | All Rob's Liquor clerks |
+| Ammunation | `WEAPON_APPISTOL`, `WEAPON_ASSAULTRIFLE`, `WEAPON_PUMPSHOTGUN`, `ammo-9`, `ammo-44`, `ammo-rifle`, `ammo-rifle2`, `ammo-shotgun` | All 11 Ammunation clerks |
+| YouTool | `lockpick`, `repair_kit` | Davis, Harmony, Paleto |
+| Digital Den | `phone`, `radio` | Legion, Mirror Park, Rockford, Little Seoul |
+| Pharmacy | Disabled until medical items are added | Pillbox, Vinewood, Sandy, Paleto |
+| The Backroom | `robbery_tablet`, `lockpick`, `drill`, `electronickit`, `thermite`, `crowbar` | Hidden peds, no blip |
+| Street Chemist | `baggies`, `acetone`, `cups`, `sprite`, `hard_candies` | Hidden peds, no blip |
 
 Every location uses a frozen invincible ped. Legal shops have red-tinted map blips. Illegal shops do not.
 
-Pistols and ammo at Ammunation require a `weapon` license. Missing licenses are shown in the UI and blocked on the server.
+Ammunation firearms require a `weapon` license. Ammo does not. Missing licenses are shown in the UI and blocked on the server.
 
 ## Requirements
 
@@ -61,16 +61,16 @@ Config.Money.cash = 'framework'
 
 ## Items
 
-Catalogs live in `config/shops.lua`. Item names follow a typical **qbx + ox_inventory** mix.
+Catalogs live in `config/shops.lua` and use the server item names listed above. Change `price` next to each item as needed.
 
-**Items that are not registered in ox_inventory are hidden automatically**, so extra aliases (for example `water` and `water_bottle`) will not break the shop.
+**Items that are not registered in ox_inventory are hidden automatically.**
 
-If you send your items list, every product can be remapped into the correct store. Until then, edit `name` / `price` / `category` in `config/shops.lua`.
+Pharmacy is in the config but disabled (`enabled = false`) because no medical items were in the list. Send those names and it can be turned on.
 
 Weapon metadata example:
 
 ```lua
-I('WEAPON_PISTOL', 2500, 'pistols', { license = 'weapon', metadata = { registered = true } })
+I('WEAPON_APPISTOL', 4500, 'pistols', { license = 'weapon', metadata = { registered = true } })
 ```
 
 Images load from `nui://ox_inventory/web/images/`. Change `Config.ImagePath` if your icons live somewhere else.

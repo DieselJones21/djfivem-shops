@@ -1,13 +1,7 @@
 --[[
-    Shop catalogs and ped locations.
-
-    Item names follow a typical qbx_core + ox_inventory mix:
-      - Everyday items: sandwich, water_bottle, bandage, phone, ...
-      - Weapons/ammo:   WEAPON_PISTOL, ammo-9, armour, ...
-
-    Any item that is not registered in ox_inventory is hidden automatically.
-    If your item names differ, change `name` here — send your items list and
-    we can remap every product to the right store.
+    Shop catalogs use the server item names from the provided list.
+    Prices can be changed here without touching anything else.
+    Missing ox_inventory items are hidden automatically.
 ]]
 
 local function I(name, price, category, extra)
@@ -20,153 +14,46 @@ end
 
 local generalItems = {
     I('sandwich', 4, 'food'),
-    I('tosti', 3, 'food'),
-    I('burger', 8, 'food'),
-    I('twerks_candy', 2, 'food'),
-    I('snikkel_candy', 2, 'food'),
-    I('chocolate', 3, 'food'),
-    I('donut', 3, 'food'),
-    I('chips', 3, 'food'),
-
-    I('water_bottle', 2, 'drinks'),
     I('water', 2, 'drinks'),
-    I('kurkakola', 3, 'drinks'),
-    I('cola', 3, 'drinks'),
-    I('sprunk', 3, 'drinks'),
-    I('coffee', 4, 'drinks'),
-    I('beer', 7, 'drinks'),
-
-    I('lighter', 2, 'misc'),
-    I('rolling_paper', 2, 'misc'),
-    I('bandage', 50, 'misc'),
-    I('cigarette', 5, 'misc'),
-    I('cigarrete', 5, 'misc'),
-}
-
-local liquorItems = {
-    I('beer', 7, 'beer'),
-    I('whiskey', 12, 'spirits'),
-    I('vodka', 12, 'spirits'),
-    I('wine', 14, 'wine'),
-    I('tequila', 12, 'spirits'),
-    I('rum', 11, 'spirits'),
+    I('ecola', 3, 'drinks'),
 }
 
 local youtoolItems = {
     I('lockpick', 150, 'tools'),
-    I('repairkit', 250, 'tools'),
-    I('advancedrepairkit', 500, 'tools'),
-    I('cleaningkit', 75, 'tools'),
-    I('screwdriverset', 350, 'tools'),
-    I('tirerepairkit', 200, 'tools'),
-    I('jerry_can', 150, 'hardware'),
-    I('jerrycan', 150, 'hardware'),
-    I('WEAPON_WRENCH', 250, 'hardware'),
-    I('WEAPON_HAMMER', 250, 'hardware'),
-    I('WEAPON_FLASHLIGHT', 80, 'hardware'),
-    I('WEAPON_CROWBAR', 200, 'hardware'),
-    I('binoculars', 50, 'hardware'),
-    I('firework1', 50, 'misc'),
-    I('firework2', 50, 'misc'),
-    I('firework3', 50, 'misc'),
-    I('firework4', 50, 'misc'),
+    I('repair_kit', 250, 'tools'),
 }
 
 local digitalItems = {
     I('phone', 850, 'phones'),
-    I('classic_phone', 700, 'phones'),
-    I('black_phone', 850, 'phones'),
     I('radio', 250, 'comms'),
-    I('laptop', 2500, 'computers'),
-    I('tablet', 1500, 'computers'),
-    I('powerbank', 150, 'accessories'),
-    I('fitbit', 400, 'accessories'),
-    I('camera', 750, 'accessories'),
-    I('headphones', 200, 'accessories'),
-    I('charger', 50, 'accessories'),
-    I('usb_drive', 125, 'storage'),
-    I('cryptostick', 400, 'storage'),
-    I('sim_card', 50, 'accessories'),
-    I('gps', 300, 'accessories'),
-}
-
-local pharmacyItems = {
-    I('bandage', 50, 'firstaid'),
-    I('ifaks', 250, 'firstaid'),
-    I('firstaid', 200, 'firstaid'),
-    I('medikit', 350, 'firstaid'),
-    I('painkillers', 75, 'medicine'),
-    I('oxy', 400, 'medicine'),
-    I('walkstick', 100, 'mobility'),
-    I('adrenaline', 500, 'medicine'),
 }
 
 local ammunationItems = {
-    I('WEAPON_KNIFE', 250, 'melee'),
-    I('WEAPON_BAT', 200, 'melee'),
-    I('WEAPON_HATCHET', 300, 'melee'),
-    I('WEAPON_SWITCHBLADE', 350, 'melee'),
-    I('WEAPON_FLASHLIGHT', 80, 'melee'),
-
-    I('WEAPON_PISTOL', 2500, 'pistols', { license = 'weapon', metadata = { registered = true } }),
-    I('WEAPON_COMBATPISTOL', 3200, 'pistols', { license = 'weapon', metadata = { registered = true } }),
-    I('WEAPON_SNSPISTOL', 1800, 'pistols', { license = 'weapon', metadata = { registered = true } }),
-    I('WEAPON_VINTAGEPISTOL', 4000, 'pistols', { license = 'weapon', metadata = { registered = true } }),
-
-    I('ammo-9', 5, 'ammo', { license = 'weapon' }),
-    I('ammo-45', 6, 'ammo', { license = 'weapon' }),
-    I('ammo-38', 5, 'ammo', { license = 'weapon' }),
-    I('ammo-44', 8, 'ammo', { license = 'weapon' }),
-    I('pistol_ammo', 15, 'ammo', { license = 'weapon' }),
-
-    I('armour', 500, 'protection'),
-    I('armor', 500, 'protection'),
-    I('heavyarmor', 900, 'protection'),
+    I('WEAPON_APPISTOL', 4500, 'pistols', { license = 'weapon', metadata = { registered = true } }),
+    I('WEAPON_ASSAULTRIFLE', 8500, 'rifles', { license = 'weapon', metadata = { registered = true } }),
+    I('WEAPON_PUMPSHOTGUN', 3500, 'shotguns', { license = 'weapon', metadata = { registered = true } }),
+    I('ammo-9', 5, 'ammo'),
+    I('ammo-44', 8, 'ammo'),
+    I('ammo-rifle', 10, 'ammo'),
+    I('ammo-rifle2', 12, 'ammo'),
+    I('ammo-shotgun', 8, 'ammo'),
 }
 
 local robberyItems = {
-    I('lockpick', 250, 'entry'),
-    I('advancedlockpick', 750, 'entry'),
-    I('advanced_lockpick', 750, 'entry'),
+    I('robbery_tablet', 3500, 'electronics'),
+    I('lockpick', 250, 'tools'),
+    I('drill', 3500, 'tools'),
     I('electronickit', 2500, 'electronics'),
-    I('trojan_usb', 3000, 'electronics'),
-    I('gatecrack', 2500, 'electronics'),
-    I('cryptostick', 1500, 'electronics'),
-    I('laptop', 2000, 'electronics'),
     I('thermite', 4000, 'breaching'),
-    I('drill', 3500, 'breaching'),
-    I('WEAPON_CROWBAR', 350, 'breaching'),
-    I('radioscanner', 2000, 'intel'),
-    I('security_card_01', 3500, 'intel'),
-    I('security_card_02', 4500, 'intel'),
-    I('binoculars', 75, 'intel'),
-    I('handcuffs', 200, 'restraint'),
-    I('ziptie', 50, 'restraint'),
-    I('bag', 150, 'carry'),
-    I('duffelbag', 250, 'carry'),
+    I('crowbar', 200, 'tools'),
 }
 
 local drugItems = {
-    I('empty_weed_bag', 2, 'packaging'),
-    I('empty_bag', 2, 'packaging'),
-    I('baggy', 3, 'packaging'),
-    I('rolling_paper', 2, 'packaging'),
-    I('bakingsoda', 15, 'supplies'),
-    I('baking_soda', 15, 'supplies'),
-    I('drugscales', 250, 'supplies'),
-    I('drug_scales', 250, 'supplies'),
-    I('weed_nutrition', 20, 'grow'),
-    I('weed_whitewidow_seed', 50, 'grow'),
-    I('weed_skunk_seed', 50, 'grow'),
-    I('weed_purplehaze_seed', 50, 'grow'),
-    I('weed_ogkush_seed', 50, 'grow'),
-    I('weed_amnesia_seed', 50, 'grow'),
-    I('weed_ak47_seed', 50, 'grow'),
-    I('joint', 15, 'product'),
-    I('cokebaggy', 250, 'product'),
-    I('crack_baggy', 200, 'product'),
-    I('xtcbaggy', 175, 'product'),
-    I('meth', 225, 'product'),
+    I('baggies', 5, 'packaging'),
+    I('acetone', 25, 'supplies'),
+    I('cups', 3, 'packaging'),
+    I('sprite', 4, 'supplies'),
+    I('hard_candies', 3, 'supplies'),
 }
 
 Config.Shops = {
@@ -181,7 +68,6 @@ Config.Shops = {
         categories = {
             { id = 'food', label = 'Food' },
             { id = 'drinks', label = 'Drinks' },
-            { id = 'misc', label = 'Misc' },
         },
         items = generalItems,
         locations = {
@@ -208,7 +94,6 @@ Config.Shops = {
         categories = {
             { id = 'food', label = 'Food' },
             { id = 'drinks', label = 'Drinks' },
-            { id = 'misc', label = 'Misc' },
         },
         items = generalItems,
         locations = {
@@ -229,11 +114,10 @@ Config.Shops = {
         blip = { sprite = 93, color = 1, label = 'Rob\'s Liquor' },
         ped = { model = 'mp_m_shopkeep_01', scenario = 'WORLD_HUMAN_STAND_MOBILE' },
         categories = {
-            { id = 'beer', label = 'Beer' },
-            { id = 'spirits', label = 'Spirits' },
-            { id = 'wine', label = 'Wine' },
+            { id = 'food', label = 'Food' },
+            { id = 'drinks', label = 'Drinks' },
         },
-        items = liquorItems,
+        items = generalItems,
         locations = {
             { label = 'San Andreas Ave', coords = vector4(-1221.58, -908.15, 12.33, 35.49) },
             { label = 'Prosperity St', coords = vector4(-1486.59, -377.68, 40.16, 139.51) },
@@ -252,10 +136,10 @@ Config.Shops = {
         blip = { sprite = 110, color = 1, label = 'Ammunation' },
         ped = { model = 's_m_y_ammucity_01', scenario = 'WORLD_HUMAN_COP_IDLES' },
         categories = {
-            { id = 'melee', label = 'Melee' },
             { id = 'pistols', label = 'Pistols' },
+            { id = 'rifles', label = 'Rifles' },
+            { id = 'shotguns', label = 'Shotguns' },
             { id = 'ammo', label = 'Ammo' },
-            { id = 'protection', label = 'Armor' },
         },
         items = ammunationItems,
         locations = {
@@ -283,8 +167,6 @@ Config.Shops = {
         ped = { model = 'mp_m_waremech_01', scenario = 'WORLD_HUMAN_CLIPBOARD' },
         categories = {
             { id = 'tools', label = 'Tools' },
-            { id = 'hardware', label = 'Hardware' },
-            { id = 'misc', label = 'Misc' },
         },
         items = youtoolItems,
         locations = {
@@ -305,9 +187,6 @@ Config.Shops = {
         categories = {
             { id = 'phones', label = 'Phones' },
             { id = 'comms', label = 'Comms' },
-            { id = 'computers', label = 'Computers' },
-            { id = 'accessories', label = 'Accessories' },
-            { id = 'storage', label = 'Storage' },
         },
         items = digitalItems,
         locations = {
@@ -322,16 +201,14 @@ Config.Shops = {
         label = 'Pharmacy',
         subtitle = 'Medical',
         interactLabel = 'Open Pharmacy',
-        enabled = true,
+        enabled = false, -- no pharmacy items were in the item list yet
         payments = { 'cash', 'bank' },
         blip = { sprite = 51, color = 1, label = 'Pharmacy' },
         ped = { model = 's_m_m_doctor_01', scenario = 'WORLD_HUMAN_CLIPBOARD' },
         categories = {
             { id = 'firstaid', label = 'First Aid' },
-            { id = 'medicine', label = 'Medicine' },
-            { id = 'mobility', label = 'Mobility' },
         },
-        items = pharmacyItems,
+        items = {},
         locations = {
             { label = 'Pillbox Hill', coords = vector4(318.91, -1078.65, 29.47, 339.20) },
             { label = 'Downtown Vinewood', coords = vector4(114.45, -4.85, 67.82, 163.0) },
@@ -350,12 +227,9 @@ Config.Shops = {
         blip = false,
         ped = { model = 'g_m_y_lost_01', scenario = 'WORLD_HUMAN_AA_SMOKE' },
         categories = {
-            { id = 'entry', label = 'Entry' },
+            { id = 'tools', label = 'Tools' },
             { id = 'electronics', label = 'Electronics' },
             { id = 'breaching', label = 'Breaching' },
-            { id = 'intel', label = 'Intel' },
-            { id = 'restraint', label = 'Restraint' },
-            { id = 'carry', label = 'Carry' },
         },
         items = robberyItems,
         locations = {
@@ -376,8 +250,6 @@ Config.Shops = {
         categories = {
             { id = 'packaging', label = 'Packaging' },
             { id = 'supplies', label = 'Supplies' },
-            { id = 'grow', label = 'Grow' },
-            { id = 'product', label = 'Product' },
         },
         items = drugItems,
         locations = {
