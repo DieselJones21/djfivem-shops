@@ -328,7 +328,7 @@ body {
     cursor: pointer;
 }
 
-.pill.active {
+.pills .pill.active {
     background: #fff;
     color: #111;
 }
