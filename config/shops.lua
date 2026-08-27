@@ -16,16 +16,40 @@ local generalItems = {
     I('sandwich', 4, 'food'),
     I('water', 2, 'drinks'),
     I('ecola', 3, 'drinks'),
+    I('cooking_ingredients', 4, 'food'),
+    I('drink_ingredients', 2, 'drinks'),
+    I('smoking_ingredients', 3, 'drinks'),
+    I('vape', 70, 'vapes'),
+    I('vape_refill_strawberry', 15, 'vapes'),
+    I('vape_refill_reallyberry', 15, 'vapes'),
+    I('vape_refill_coconutlimeade', 15, 'vapes'),
+    I('vape_refill_mint', 15, 'vapes'),
+    I('vape_refill_mango', 15, 'vapes'),
+    I('vape_refill_apple', 15, 'vapes'),
+    I('vape_refill_pineapple', 15, 'vapes'),
+    I('vape_refill_lavaflow', 15, 'vapes'),
+    I('vape_refill_allmelon', 15, 'vapes'),
+    I('vape_refill_lemon', 15, 'vapes'),
+    I('vape_refill_peach', 15, 'vapes'),
+    I('vape_elfbar_blueberry', 20, 'vapes'),
+    I('vape_elfbar_cola', 20, 'vapes'),
+    I('vape_elfbar_grape', 20, 'vapes'),
+    I('vape_elfbar_kiwi', 20, 'vapes'),
+    I('vape_elfbar_mango', 20, 'vapes'),
+    I('vape_elfbar_melon', 20, 'vapes'),
+    I('vape_elfbar_strawberry', 20, 'vapes'),
 }
 
 local youtoolItems = {
     I('lockpick', 150, 'tools'),
     I('repair_kit', 250, 'tools'),
+    I('dono_paint_remover', 400, 'tools'),
 }
 
 local digitalItems = {
     I('phone', 850, 'phones'),
     I('radio', 250, 'comms'),
+    I('gambling_tablet', 3000, 'electronics'),
 }
 
 local ammunationItems = {
@@ -37,6 +61,7 @@ local ammunationItems = {
     I('ammo-rifle', 10, 'ammo'),
     I('ammo-rifle2', 12, 'ammo'),
     I('ammo-shotgun', 8, 'ammo'),
+    I('ammo-bb', 3, 'ammo'),
 }
 
 local robberyItems = {
@@ -46,6 +71,7 @@ local robberyItems = {
     I('electronickit', 2500, 'electronics'),
     I('thermite', 4000, 'breaching'),
     I('crowbar', 200, 'tools'),
+    I('laundry_card', 200, 'tools'),
 }
 
 local drugItems = {
@@ -54,6 +80,12 @@ local drugItems = {
     I('cups', 3, 'packaging'),
     I('sprite', 4, 'supplies'),
     I('hard_candies', 3, 'supplies'),
+}
+
+local convenienceCategories = {
+    { id = 'food', label = 'Food' },
+    { id = 'drinks', label = 'Drinks' },
+    { id = 'vapes', label = 'Vapes' },
 }
 
 Config.Shops = {
@@ -65,10 +97,7 @@ Config.Shops = {
         payments = { 'cash', 'bank' },
         blip = { sprite = 52, color = 1, label = '24/7' },
         ped = { model = 'mp_m_shopkeep_01', scenario = 'WORLD_HUMAN_STAND_MOBILE' },
-        categories = {
-            { id = 'food', label = 'Food' },
-            { id = 'drinks', label = 'Drinks' },
-        },
+        categories = convenienceCategories,
         items = generalItems,
         locations = {
             { label = 'Innocence Blvd', coords = vector4(24.47, -1346.62, 29.50, 271.66) },
@@ -91,10 +120,7 @@ Config.Shops = {
         payments = { 'cash', 'bank' },
         blip = { sprite = 52, color = 1, label = 'LTD Gasoline' },
         ped = { model = 'mp_m_shopkeep_01', scenario = 'WORLD_HUMAN_STAND_MOBILE' },
-        categories = {
-            { id = 'food', label = 'Food' },
-            { id = 'drinks', label = 'Drinks' },
-        },
+        categories = convenienceCategories,
         items = generalItems,
         locations = {
             { label = 'Grove Street', coords = vector4(-47.02, -1758.23, 29.42, 45.05) },
@@ -113,10 +139,7 @@ Config.Shops = {
         payments = { 'cash', 'bank' },
         blip = { sprite = 93, color = 1, label = 'Rob\'s Liquor' },
         ped = { model = 'mp_m_shopkeep_01', scenario = 'WORLD_HUMAN_STAND_MOBILE' },
-        categories = {
-            { id = 'food', label = 'Food' },
-            { id = 'drinks', label = 'Drinks' },
-        },
+        categories = convenienceCategories,
         items = generalItems,
         locations = {
             { label = 'San Andreas Ave', coords = vector4(-1221.58, -908.15, 12.33, 35.49) },
@@ -170,7 +193,7 @@ Config.Shops = {
         },
         items = youtoolItems,
         locations = {
-            { label = 'Davis', coords = vector4(45.68, -1749.04, 29.61, 53.13) },
+            { label = 'Davis', coords = vector4(68.84, -1570.16, 29.60, 55.97) },
             { label = 'Harmony', coords = vector4(2747.71, 3472.85, 55.67, 255.08) },
             { label = 'Paleto Bay', coords = vector4(-421.83, 6136.13, 31.88, 228.2) },
         },
@@ -187,6 +210,7 @@ Config.Shops = {
         categories = {
             { id = 'phones', label = 'Phones' },
             { id = 'comms', label = 'Comms' },
+            { id = 'electronics', label = 'Electronics' },
         },
         items = digitalItems,
         locations = {

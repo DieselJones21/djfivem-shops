@@ -284,6 +284,7 @@ lib.callback.register('djshops:openShop', function(source, shopId, locationIndex
         items = items,
         maxQuantity = Config.MaxQuantity,
         closeHint = Config.CloseHint,
+        resourceLabel = Config.ResourceLabel,
     }
 end)
 

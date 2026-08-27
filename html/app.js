@@ -8,6 +8,8 @@ const paymentPillsEl = document.getElementById('paymentPills');
 const searchEl = document.getElementById('search');
 const checkoutBtn = document.getElementById('checkoutBtn');
 
+const isNui = typeof GetParentResourceName === 'function';
+
 const state = {
     shop: null,
     player: null,
@@ -28,7 +30,29 @@ const methodLabels = {
     black_money: 'Dirty',
 };
 
+const tabIcons = {
+    all: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/></svg>',
+    food: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v9a3 3 0 0 0 3 3v8h2V2h-2v8H9V2H8zm8 3c-1.1 2.2-1.5 4-1.5 7V22h2V12c2-1 3.5-3.2 3.5-7h-4z"/></svg>',
+    drinks: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l-1.2 14.4A3 3 0 0 1 13.82 20H10.18a3 3 0 0 1-2.98-2.6L6 3zm3.1 2-.3 3.6h6.4L15 5H9.1z"/></svg>',
+    vapes: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 14h11v3H3v-3zm13 0h2v3h-2v-3zm3.5-6.5c1.4 0 2.5 1.1 2.5 2.5h-2c0-.3-.2-.5-.5-.5s-.5.2-.5.5h-2c0-1.4 1.1-2.5 2.5-2.5zM17 4c2.2 0 4 1.8 4 4h-2a2 2 0 0 0-2-2V4z"/></svg>',
+    pistols: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h13l2 3h3v2h-4l-2 4H13l1.2-4H8v4H5V9H3V7h2V5h3v2h10v2H3z"/></svg>',
+    rifles: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 11h15l3-3h2v2h-1.2L18 13v3h-2v-2H9v3H7v-3H2v-3z"/></svg>',
+    shotguns: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h14l4-4h2v2l-3.2 3.2L17 18h-2l1-4H9v3H7v-3H2v-2z"/></svg>',
+    ammo: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2h8v6l-2 12H10L8 8V2zm2 2v4h4V4h-4z"/></svg>',
+    tools: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 7.2 16.8 3l-3.1 3.1A6 6 0 0 0 6 12.2L2 16.2 5.8 20l4-4A6 6 0 0 0 16 12l3.1-3.1L21 7.2z"/></svg>',
+    phones: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 3v12h8V5H8z"/></svg>',
+    comms: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 1 9 9h-2a7 7 0 0 0-7-7V3zm0 4a5 5 0 0 1 5 5h-2a3 3 0 0 0-3-3V7zm-1 5h2v8h-2v-8z"/></svg>',
+    electronics: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H4V5zm2 2v7h12V7H6zm4 13h4v2h-4v-2z"/></svg>',
+    breaching: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 10-14h-7l0-6z"/></svg>',
+    packaging: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4v10l-9 4-9-4V7zm9 2 7-3-7-3-7 3 7 3z"/></svg>',
+    supplies: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l1 5H6l1-5zm-1 7h12v11H6V10zm3 2v7h2v-7H9zm4 0v7h2v-7h-2z"/></svg>',
+};
+
 function nui(name, data) {
+    if (!isNui) {
+        return Promise.resolve({ ok: true, player: state.player });
+    }
+
     return fetch(`https://${GetParentResourceName()}/${name}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json; charset=UTF-8' },
@@ -100,7 +124,7 @@ function renderTabs() {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = `tab${state.category === tab.id ? ' active' : ''}`;
-        button.textContent = tab.label;
+        button.innerHTML = `${tabIcons[tab.id] || ''}<span>${tab.label}</span>`;
         button.addEventListener('click', () => {
             state.category = tab.id;
             renderTabs();
@@ -284,6 +308,7 @@ function openUi(data) {
     document.getElementById('shopSubtitle').textContent = data.shop.location || data.shop.subtitle || 'Store';
     document.getElementById('brandMark').textContent = data.shop.label.slice(0, 2).toUpperCase();
     document.getElementById('closeHint').textContent = data.closeHint || 'ESC (Close Shop)';
+    document.getElementById('footerBrand').textContent = data.resourceLabel || 'DJ Shops';
 
     setPlayer(data.player);
     renderTabs();
@@ -320,3 +345,37 @@ window.addEventListener('message', (event) => {
         setPlayer(data.player);
     }
 });
+
+function previewPayload() {
+    const image = (name) => `data:image/svg+xml;utf8,${encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="12" fill="#1a1a1a"/><text x="32" y="38" text-anchor="middle" fill="#ff2a2a" font-size="11" font-family="Inter,sans-serif">${name.slice(0, 6)}</text></svg>`
+    )}`;
+
+    return {
+        shop: { label: '24/7', subtitle: 'Supermarket', location: 'Innocence Blvd' },
+        resourceLabel: 'DJ Shops',
+        closeHint: 'ESC (Close Shop)',
+        payments: ['cash', 'bank'],
+        player: { name: 'Alex Reyes', cash: 3510, bank: 12450 },
+        categories: [
+            { id: 'food', label: 'Food' },
+            { id: 'drinks', label: 'Drinks' },
+            { id: 'vapes', label: 'Vapes' },
+        ],
+        items: [
+            { name: 'sandwich', label: 'Sandwich', price: 4, category: 'food', image: image('food') },
+            { name: 'cooking_ingredients', label: 'Cooking Ingredients', price: 4, category: 'food', image: image('cook') },
+            { name: 'water', label: 'Water', price: 2, category: 'drinks', image: image('water') },
+            { name: 'ecola', label: 'eCola', price: 3, category: 'drinks', image: image('ecola') },
+            { name: 'vape', label: 'Vape Kit', price: 70, category: 'vapes', image: image('vape') },
+            { name: 'vape_refill_strawberry', label: 'Strawberry Vape Juice', price: 15, category: 'vapes', image: image('juice') },
+            { name: 'vape_elfbar_blueberry', label: 'Elfbar Blueberry', price: 20, category: 'vapes', image: image('elf') },
+            { name: 'vape_elfbar_mango', label: 'Elfbar Mango', price: 20, category: 'vapes', image: image('elf') },
+        ],
+        maxQuantity: 25,
+    };
+}
+
+if (!isNui) {
+    openUi(previewPayload());
+}

@@ -6,14 +6,14 @@ Ped-based shops for **ox_inventory** with a red/black dashboard UI, **cash or ba
 
 | Shop | What it sells | Locations |
 | --- | --- | --- |
-| 24/7 | `sandwich`, `water`, `ecola` | All vanilla 24/7 clerks |
-| LTD Gasoline | `sandwich`, `water`, `ecola` | Grove, Little Seoul, Richman, Mirror Park, Grapeseed |
-| Rob's Liquor | `sandwich`, `water`, `ecola` | All Rob's Liquor clerks |
-| Ammunation | `WEAPON_APPISTOL`, `WEAPON_ASSAULTRIFLE`, `WEAPON_PUMPSHOTGUN`, `ammo-9`, `ammo-44`, `ammo-rifle`, `ammo-rifle2`, `ammo-shotgun` | All 11 Ammunation clerks |
-| YouTool | `lockpick`, `repair_kit` | Davis, Harmony, Paleto |
-| Digital Den | `phone`, `radio` | Legion, Mirror Park, Rockford, Little Seoul |
+| 24/7 | Food, drinks, ingredients, vape kits / juice / Elfbars | All vanilla 24/7 clerks |
+| LTD Gasoline | Same convenience catalog as 24/7 | Grove, Little Seoul, Richman, Mirror Park, Grapeseed |
+| Rob's Liquor | Same convenience catalog as 24/7 | All Rob's Liquor clerks |
+| Ammunation | `WEAPON_APPISTOL`, `WEAPON_ASSAULTRIFLE`, `WEAPON_PUMPSHOTGUN`, `ammo-9`, `ammo-44`, `ammo-rifle`, `ammo-rifle2`, `ammo-shotgun`, `ammo-bb` | All 11 Ammunation clerks |
+| YouTool | `lockpick`, `repair_kit`, `dono_paint_remover` | Davis (`68.84, -1570.16, 29.60, 55.97`), Harmony, Paleto |
+| Digital Den | `phone`, `radio`, `gambling_tablet` | Legion, Mirror Park, Rockford, Little Seoul |
 | Pharmacy | Disabled until medical items are added | Pillbox, Vinewood, Sandy, Paleto |
-| The Backroom | `robbery_tablet`, `lockpick`, `drill`, `electronickit`, `thermite`, `crowbar` | Hidden peds, no blip |
+| The Backroom | `robbery_tablet`, `lockpick`, `drill`, `electronickit`, `thermite`, `crowbar`, `laundry_card` | Hidden peds, no blip |
 | Street Chemist | `baggies`, `acetone`, `cups`, `sprite`, `hard_candies` | Hidden peds, no blip |
 
 Every location uses a frozen invincible ped. Legal shops have red-tinted map blips. Illegal shops do not.
