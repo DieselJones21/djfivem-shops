@@ -1,6 +1,6 @@
 # djfivem-shops
 
-Ped-based shops for **ox_inventory** with a red/black dashboard UI, **cash or bank** checkout (Renewed Banking statements), and **interact** support.
+Ped-based shops for **ox_inventory** with a chrome DJ FiveM Scripts dashboard UI, **cash or bank** checkout (Renewed Banking statements), and **interact** support.
 
 ## Shops
 

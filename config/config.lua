@@ -1,7 +1,7 @@
 Config = {}
 
 -- Resource display name used in the UI header when a shop does not override it.
-Config.ResourceLabel = 'DJ Shops'
+Config.ResourceLabel = 'DJ FiveM Scripts'
 
 -- How players interact with shop peds.
 -- 'interact'  = darktrovx/interact (recommended)

@@ -4,7 +4,7 @@ lua54 'yes'
 
 name 'djfivem-shops'
 author 'DieselJones21'
-description 'Ped-based shops for ox_inventory with interact, cash/bank (Renewed Banking), and a red/black NUI'
+description 'Ped-based shops for ox_inventory with interact, cash/bank (Renewed Banking), and a chrome DJ FiveM Scripts NUI'
 version '1.0.0'
 
 shared_scripts {
@@ -27,6 +27,7 @@ files {
     'html/index.html',
     'html/style.css',
     'html/app.js',
+    'html/img/dj-fivem-scripts.webp',
 }
 
 dependencies {

@@ -306,9 +306,8 @@ function openUi(data) {
 
     document.getElementById('shopName').textContent = data.shop.label;
     document.getElementById('shopSubtitle').textContent = data.shop.location || data.shop.subtitle || 'Store';
-    document.getElementById('brandMark').textContent = data.shop.label.slice(0, 2).toUpperCase();
     document.getElementById('closeHint').textContent = data.closeHint || 'ESC (Close Shop)';
-    document.getElementById('footerBrand').textContent = data.resourceLabel || 'DJ Shops';
+    document.getElementById('footerBrand').textContent = data.resourceLabel || 'DJ FiveM Scripts';
 
     setPlayer(data.player);
     renderTabs();
@@ -348,12 +347,12 @@ window.addEventListener('message', (event) => {
 
 function previewPayload() {
     const image = (name) => `data:image/svg+xml;utf8,${encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="12" fill="#1a1a1a"/><text x="32" y="38" text-anchor="middle" fill="#ff2a2a" font-size="11" font-family="Inter,sans-serif">${name.slice(0, 6)}</text></svg>`
+        `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="12" fill="#141414"/><text x="32" y="38" text-anchor="middle" fill="#d8d8d8" font-size="11" font-family="Inter,sans-serif">${name.slice(0, 6)}</text></svg>`
     )}`;
 
     return {
         shop: { label: '24/7', subtitle: 'Supermarket', location: 'Innocence Blvd' },
-        resourceLabel: 'DJ Shops',
+        resourceLabel: 'DJ FiveM Scripts',
         closeHint: 'ESC (Close Shop)',
         payments: ['cash', 'bank'],
         player: { name: 'Alex Reyes', cash: 3510, bank: 12450 },
