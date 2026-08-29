@@ -37,9 +37,20 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: transparent;
+    background: transparent !important;
     font-family: Inter, system-ui, sans-serif;
     color: var(--text);
+    pointer-events: none;
+}
+
+body.preview,
+#app:not(.hidden),
+.preview-bar.is-open {
+    pointer-events: auto;
+}
+
+.hidden {
+    display: none !important;
 }
 
 #app.preview-offset {
