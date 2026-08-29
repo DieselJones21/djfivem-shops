@@ -8,7 +8,31 @@ const paymentPillsEl = document.getElementById('paymentPills');
 const searchEl = document.getElementById('search');
 const checkoutBtn = document.getElementById('checkoutBtn');
 
-const isNui = typeof GetParentResourceName === 'function';
+function isGameNui() {
+    const host = String(location.hostname || '');
+    const proto = String(location.protocol || '');
+    return proto === 'nui:' || host.startsWith('cfx-nui-') || host.includes('cfx-nui');
+}
+
+function isBrowserPreview() {
+    if (isGameNui()) return false;
+    const host = String(location.hostname || '');
+    const proto = String(location.protocol || '');
+    return host === '127.0.0.1' || host === 'localhost' || proto === 'file:';
+}
+
+function parentResource() {
+    try {
+        if (typeof GetParentResourceName === 'function') {
+            return GetParentResourceName();
+        }
+    } catch (e) {
+        // FiveM injects this native; ignore if it is not ready yet.
+    }
+    const host = String(location.hostname || '');
+    const match = host.match(/^cfx-nui-(.+)$/i);
+    return match ? match[1] : 'djfivem-shops';
+}
 
 const previewThemes = {
     chrome: {
@@ -160,11 +184,11 @@ const tabIcons = {
 };
 
 function nui(name, data) {
-    if (!isNui) {
+    if (isBrowserPreview()) {
         return Promise.resolve({ ok: true, player: state.player });
     }
 
-    return fetch(`https://${GetParentResourceName()}/${name}`, {
+    return fetch(`https://${parentResource()}/${name}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json; charset=UTF-8' },
         body: JSON.stringify(data || {}),
@@ -492,7 +516,7 @@ function previewPayload() {
     };
 }
 
-if (!isNui) {
+if (isBrowserPreview()) {
     document.body.classList.add('preview');
     document.getElementById('app').classList.add('preview-offset');
     document.getElementById('previewBar').classList.add('is-open');

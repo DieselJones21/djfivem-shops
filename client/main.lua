@@ -42,7 +42,6 @@ local function resolveTarget(waitMs)
 end
 
 local function closeUi()
-    if not uiOpen then return end
     uiOpen = false
     currentShop, currentIndex = nil, nil
     SetNuiFocus(false, false)
@@ -273,9 +272,15 @@ AddEventHandler('onResourceStop', function(resource)
 end)
 
 CreateThread(function()
+    SetNuiFocus(false, false)
+    SendNUIMessage({ action = 'close' })
+
     while not NetworkIsPlayerActive(PlayerId()) do
         Wait(250)
     end
+
+    SetNuiFocus(false, false)
+    SendNUIMessage({ action = 'close' })
     Wait(1500)
     spawnShops()
 end)
