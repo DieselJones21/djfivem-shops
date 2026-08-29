@@ -1,6 +1,6 @@
 # djfivem-shops
 
-Ped-based shops for **ox_inventory** with a red/black dashboard UI, **cash or bank** checkout (Renewed Banking statements), and **interact** support.
+Ped-based shops for **ox_inventory** with config-driven DJ FiveM gradient themes, **cash or bank** checkout (Renewed Banking statements), and **interact** support.
 
 ## Shops
 
@@ -46,6 +46,16 @@ ensure djfivem-shops
 5. Restart the server.
 
 `config/config.lua` defaults to `Config.Target = 'auto'`, which uses **interact** when it is started.
+
+## Themes
+
+Same `Config.Theme` system as **djfivem-scriptmanager**. Pick a preset:
+
+```lua
+Config.Theme.preset = 'chrome' -- chrome | lava | vice | gold | ice | sunset
+```
+
+Leave `preset = ''` and fill `Config.Theme.gradient` for a custom blend (`colors`, `angle`, `inkOnAccent`, `glow`). The NUI applies those values as CSS variables when a shop opens.
 
 ## Payments
 

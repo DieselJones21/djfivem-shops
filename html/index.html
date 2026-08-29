@@ -6,15 +6,23 @@
     <title>DJ Shops</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+    <div class="preview-bar" id="previewBar" aria-label="Theme preview">
+        <button type="button" data-preview="chrome">Chrome</button>
+        <button type="button" data-preview="lava">Lava</button>
+        <button type="button" data-preview="vice">Vice</button>
+        <button type="button" data-preview="gold">Gold</button>
+        <button type="button" data-preview="ice">Ice</button>
+        <button type="button" data-preview="sunset">Sunset</button>
+    </div>
     <div id="app" class="hidden" aria-hidden="true">
         <div class="shell">
             <header class="topbar">
                 <div class="brand">
-                    <div class="brand-mark" id="brandMark">24</div>
+                    <img class="brand-logo" id="brandLogo" src="img/dj-fivem-scripts.webp" alt="DJ FiveM Scripts" />
                     <div>
                         <h1 id="shopName">Shop</h1>
                         <p id="shopSubtitle">Store</p>
@@ -99,7 +107,7 @@
             </section>
 
             <footer class="hint">
-                <span class="footer-brand" id="footerBrand">DJ Shops</span>
+                <span class="footer-brand" id="footerBrand">DJ FiveM Scripts</span>
                 <span class="close-chip" id="closeHint">ESC (Close Shop)</span>
             </footer>
         </div>

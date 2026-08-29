@@ -10,6 +10,117 @@ const checkoutBtn = document.getElementById('checkoutBtn');
 
 const isNui = typeof GetParentResourceName === 'function';
 
+const previewThemes = {
+    chrome: {
+        gradientAngle: 125,
+        gradientColors: ['#ffffff', '#d4d4d4', '#8a8a8a', '#f4f4f4', '#3a3a3a'],
+        onAccent: '#111111',
+        glow: '#e8e8e8',
+        preset: 'chrome',
+    },
+    lava: {
+        gradientAngle: 90,
+        gradientColors: ['#ffb347', '#e10600', '#7a00c8'],
+        onAccent: '#ffffff',
+        glow: '#e10600',
+        preset: 'lava',
+    },
+    vice: {
+        gradientAngle: 110,
+        gradientColors: ['#ff2bd6', '#7a5cff', '#00e5ff'],
+        onAccent: '#ffffff',
+        glow: '#7a5cff',
+        preset: 'vice',
+    },
+    gold: {
+        gradientAngle: 120,
+        gradientColors: ['#fff3c4', '#f5c542', '#c4841d', '#7a4a00'],
+        onAccent: '#1a1204',
+        glow: '#f5c542',
+        preset: 'gold',
+    },
+    ice: {
+        gradientAngle: 100,
+        gradientColors: ['#d9fbff', '#5ad0ff', '#2563eb', '#0b1b4a'],
+        onAccent: '#ffffff',
+        glow: '#5ad0ff',
+        preset: 'ice',
+    },
+    sunset: {
+        gradientAngle: 95,
+        gradientColors: ['#ffe08a', '#ff6a2b', '#e10600', '#6b0030'],
+        onAccent: '#ffffff',
+        glow: '#ff6a2b',
+        preset: 'sunset',
+    },
+};
+
+function hexToRgb(hex) {
+    const h = String(hex || '').replace('#', '');
+    if (h.length !== 6) return '232, 232, 232';
+    return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(', ');
+}
+
+function gradientFrom(theme) {
+    const colors = (theme.gradientColors && theme.gradientColors.length)
+        ? theme.gradientColors
+        : [theme.ember, theme.accent, theme.crimson].filter(Boolean);
+    const list = colors.length ? colors : ['#ffffff', '#8a8a8a', '#3a3a3a'];
+    const angle = theme.gradientAngle || 90;
+    const stops = list.map((c, i) => `${c} ${Math.round((i / Math.max(list.length - 1, 1)) * 100)}%`).join(', ');
+    const glow = theme.glow || list[Math.floor(list.length / 2)] || list[0];
+    return {
+        fill: `linear-gradient(${angle}deg, ${stops})`,
+        fillV: `linear-gradient(180deg, ${stops})`,
+        rgb: theme.accentRgb || hexToRgb(glow),
+        ink: theme.onAccent || '#ffffff',
+    };
+}
+
+function applyTheme(theme) {
+    if (!theme) return;
+    const root = document.documentElement.style;
+    const map = {
+        ink: '--ink',
+        muted: '--muted',
+        line: '--line',
+        paper: '--paper',
+        wash: '--wash',
+        screen: '--screen',
+        panel: '--panel',
+        card: '--card',
+        card2: '--card-2',
+        bezelTop: '--bezel-top',
+        bezelMid: '--bezel-mid',
+        bezelBottom: '--bezel-bottom',
+    };
+    Object.keys(map).forEach((key) => {
+        if (theme[key]) root.setProperty(map[key], theme[key]);
+    });
+    if (theme.screen) root.setProperty('--bg', theme.screen);
+    if (theme.ink) root.setProperty('--text', theme.ink);
+    if (theme.line) root.setProperty('--border', theme.line);
+
+    const g = gradientFrom(theme);
+    root.setProperty('--accent', theme.accentFill || g.fill);
+    root.setProperty('--accent-v', theme.accentFillV || g.fillV);
+    root.setProperty('--accent-rgb', g.rgb);
+    root.setProperty('--on-accent', g.ink);
+    root.setProperty('--glow', `0 0 18px rgba(${g.rgb}, 0.28)`);
+
+    const logo = document.getElementById('brandLogo');
+    if (logo && theme.logo) logo.src = theme.logo;
+
+    const footer = document.getElementById('footerBrand');
+    if (footer && (theme.appName || theme.appTag)) {
+        footer.textContent = [theme.appName, theme.appTag].filter(Boolean).join(' ') || footer.textContent;
+    }
+
+    document.querySelectorAll('#previewBar [data-preview]').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.preview === theme.preset);
+    });
+}
+
 const state = {
     shop: null,
     player: null,
@@ -306,9 +417,9 @@ function openUi(data) {
 
     document.getElementById('shopName').textContent = data.shop.label;
     document.getElementById('shopSubtitle').textContent = data.shop.location || data.shop.subtitle || 'Store';
-    document.getElementById('brandMark').textContent = data.shop.label.slice(0, 2).toUpperCase();
     document.getElementById('closeHint').textContent = data.closeHint || 'ESC (Close Shop)';
-    document.getElementById('footerBrand').textContent = data.resourceLabel || 'DJ Shops';
+    document.getElementById('footerBrand').textContent = data.resourceLabel || 'DJ FiveM Scripts';
+    applyTheme(data.theme);
 
     setPlayer(data.player);
     renderTabs();
@@ -348,12 +459,12 @@ window.addEventListener('message', (event) => {
 
 function previewPayload() {
     const image = (name) => `data:image/svg+xml;utf8,${encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="12" fill="#1a1a1a"/><text x="32" y="38" text-anchor="middle" fill="#ff2a2a" font-size="11" font-family="Inter,sans-serif">${name.slice(0, 6)}</text></svg>`
+        `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="12" fill="#141414"/><text x="32" y="38" text-anchor="middle" fill="#d8d8d8" font-size="11" font-family="Inter,sans-serif">${name.slice(0, 6)}</text></svg>`
     )}`;
 
     return {
         shop: { label: '24/7', subtitle: 'Supermarket', location: 'Innocence Blvd' },
-        resourceLabel: 'DJ Shops',
+        resourceLabel: 'DJ FiveM Scripts',
         closeHint: 'ESC (Close Shop)',
         payments: ['cash', 'bank'],
         player: { name: 'Alex Reyes', cash: 3510, bank: 12450 },
@@ -373,9 +484,26 @@ function previewPayload() {
             { name: 'vape_elfbar_mango', label: 'Elfbar Mango', price: 20, category: 'vapes', image: image('elf') },
         ],
         maxQuantity: 25,
+        theme: Object.assign({
+            appName: 'DJ FiveM',
+            appTag: 'Scripts',
+            logo: 'img/dj-fivem-scripts.webp',
+        }, previewThemes.chrome),
     };
 }
 
 if (!isNui) {
+    document.body.classList.add('preview');
+    document.getElementById('app').classList.add('preview-offset');
+    document.getElementById('previewBar').classList.add('is-open');
+    document.getElementById('previewBar').addEventListener('click', (event) => {
+        const btn = event.target.closest('[data-preview]');
+        if (!btn) return;
+        const next = Object.assign({}, previewThemes[btn.dataset.preview]);
+        next.appName = 'DJ FiveM';
+        next.appTag = 'Scripts';
+        next.logo = 'img/dj-fivem-scripts.webp';
+        applyTheme(next);
+    });
     openUi(previewPayload());
 }
