@@ -22,16 +22,51 @@ function isBrowserPreview() {
 }
 
 function parentResource() {
+    let name = 'djfivem-shops';
     try {
         if (typeof GetParentResourceName === 'function') {
-            return GetParentResourceName();
+            name = GetParentResourceName();
         }
     } catch (e) {
         // FiveM injects this native; ignore if it is not ready yet.
     }
-    const host = String(location.hostname || '');
-    const match = host.match(/^cfx-nui-(.+)$/i);
-    return match ? match[1] : 'djfivem-shops';
+    if (name === 'djfivem-shops') {
+        const host = String(location.hostname || '');
+        const match = host.match(/^cfx-nui-([A-Za-z0-9_-]+)$/i);
+        if (match) name = match[1];
+    }
+    return /^[A-Za-z0-9_-]{1,64}$/.test(name) ? name : 'djfivem-shops';
+}
+
+function safeCssColor(value) {
+    const s = String(value || '').trim();
+    if (/^#[0-9a-fA-F]{3,8}$/.test(s)) return s;
+    if (/^rgba?\([\d\s.,%]+\)$/.test(s)) return s;
+    return '';
+}
+
+function safeCssGradient(value) {
+    const s = String(value || '').trim();
+    if (/url\(|expression|javascript:|<|>/i.test(s)) return '';
+    if (!/^linear-gradient\(\d{1,3}deg,\s*(?:#[0-9a-fA-F]{3,8}\s+\d{1,3}%(?:,\s*)?)+\)$/.test(s)) return '';
+    return s;
+}
+
+function safeLogoPath(value) {
+    const s = String(value || '');
+    return /^img\/[A-Za-z0-9._-]+\.(webp|png|jpg|jpeg|svg)$/.test(s) ? s : '';
+}
+
+function safeItemImage(src) {
+    const s = String(src || '');
+    if (/^nui:\/\/ox_inventory\/web\/images\/[A-Za-z0-9._-]+\.(png|webp|jpg|jpeg)$/.test(s)) return s;
+    if (s.startsWith('data:image/svg+xml')) return s;
+    return '';
+}
+
+function safeAccentRgb(value) {
+    const s = String(value || '');
+    return /^\d{1,3},\s*\d{1,3},\s*\d{1,3}$/.test(s) ? s : '';
 }
 
 const previewThemes = {
@@ -147,26 +182,36 @@ function applyTheme(theme) {
         bezelBottom: '--bezel-bottom',
     };
     Object.keys(map).forEach((key) => {
-        if (theme[key]) root.setProperty(map[key], theme[key]);
+        const color = safeCssColor(theme[key]);
+        if (color) root.setProperty(map[key], color);
     });
-    if (theme.screen) root.setProperty('--bg', theme.screen);
-    if (theme.ink) root.setProperty('--text', theme.ink);
-    if (theme.line) root.setProperty('--border', theme.line);
+    const screen = safeCssColor(theme.screen);
+    const ink = safeCssColor(theme.ink);
+    const line = safeCssColor(theme.line);
+    if (screen) root.setProperty('--bg', screen);
+    if (ink) root.setProperty('--text', ink);
+    if (line) root.setProperty('--border', line);
 
     const g = gradientFrom(theme);
-    root.setProperty('--accent', theme.accentFill || g.fill);
-    root.setProperty('--accent-v', theme.accentFillV || g.fillV);
-    root.setProperty('--accent-rgb', g.rgb);
-    root.setProperty('--on-accent', g.ink);
-    root.setProperty('--glow', `0 0 18px rgba(${g.rgb}, 0.28)`);
-    if (theme.logo) {
-        root.setProperty('--brand-logo', `url("${theme.logo}")`);
+    const fill = safeCssGradient(theme.accentFill) || safeCssGradient(g.fill);
+    const fillV = safeCssGradient(theme.accentFillV) || safeCssGradient(g.fillV);
+    const rgb = safeAccentRgb(g.rgb) || '255, 45, 138';
+    const onAccent = safeCssColor(g.ink) || '#ffffff';
+    if (fill) root.setProperty('--accent', fill);
+    if (fillV) root.setProperty('--accent-v', fillV);
+    root.setProperty('--accent-rgb', rgb);
+    root.setProperty('--on-accent', onAccent);
+    root.setProperty('--glow', `0 0 18px rgba(${rgb}, 0.28)`);
+    const logoPath = safeLogoPath(theme.logo);
+    if (logoPath) {
+        root.setProperty('--brand-logo', `url("${logoPath}")`);
     }
-    document.documentElement.setAttribute('data-theme', theme.preset || 'custom');
+    const preset = String(theme.preset || 'custom').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 32) || 'custom';
+    document.documentElement.setAttribute('data-theme', preset);
 
     const logo = document.getElementById('brandLogo');
-    if (logo && theme.logo) {
-        logo.src = theme.logo;
+    if (logo && logoPath) {
+        logo.src = logoPath;
         logo.alt = [theme.appName, theme.appTag].filter(Boolean).join(' ') || 'Shop';
     }
 
@@ -191,6 +236,7 @@ const state = {
     query: '',
     cart: {},
     maxQuantity: 25,
+    maxCartItems: 20,
     busy: false,
 };
 
@@ -272,12 +318,13 @@ function setPlayer(player) {
 }
 
 function renderPayments() {
-    paymentPillsEl.innerHTML = '';
+    paymentPillsEl.replaceChildren();
     state.payments.forEach((method) => {
+        if (!methodLabels[method]) return;
         const button = document.createElement('button');
         button.type = 'button';
         button.className = `pill${state.method === method ? ' active' : ''}`;
-        button.textContent = methodLabels[method] || method;
+        button.textContent = methodLabels[method];
         button.addEventListener('click', () => {
             state.method = method;
             renderPayments();
@@ -288,13 +335,20 @@ function renderPayments() {
 }
 
 function renderTabs() {
-    tabsEl.innerHTML = '';
+    tabsEl.replaceChildren();
     const tabs = [{ id: 'all', label: 'All' }, ...state.categories];
     tabs.forEach((tab) => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = `tab${state.category === tab.id ? ' active' : ''}`;
-        button.innerHTML = `${tabIcons[tab.id] || ''}<span>${tab.label}</span>`;
+        if (tabIcons[tab.id]) {
+            const icon = document.createElement('span');
+            icon.innerHTML = tabIcons[tab.id];
+            if (icon.firstChild) button.appendChild(icon.firstChild);
+        }
+        const label = document.createElement('span');
+        label.textContent = tab.label;
+        button.appendChild(label);
         button.addEventListener('click', () => {
             state.category = tab.id;
             renderTabs();
@@ -333,13 +387,16 @@ function renderGrid() {
 
         const imageWrap = document.createElement('div');
         imageWrap.className = 'item-image';
-        const img = document.createElement('img');
-        img.alt = item.label;
-        img.src = item.image;
-        img.addEventListener('error', () => {
-            img.style.display = 'none';
-        });
-        imageWrap.appendChild(img);
+        const image = safeItemImage(item.image);
+        if (image) {
+            const img = document.createElement('img');
+            img.alt = item.label;
+            img.src = image;
+            img.addEventListener('error', () => {
+                img.style.display = 'none';
+            });
+            imageWrap.appendChild(img);
+        }
 
         const title = document.createElement('h3');
         title.textContent = item.label;
@@ -389,12 +446,19 @@ function renderGrid() {
 }
 
 function addToCart(item, count) {
+    if (!item || item.locked) return;
+    const catalogItem = state.items.find((entry) => entry.name === item.name);
+    if (!catalogItem || catalogItem.locked) return;
+    const qty = Math.floor(Number(count) || 0);
+    if (qty < 1) return;
+    if (!state.cart[item.name] && Object.keys(state.cart).length >= state.maxCartItems) return;
+
     const current = state.cart[item.name];
-    const nextCount = Math.min(state.maxQuantity, (current?.count || 0) + count);
+    const nextCount = Math.min(state.maxQuantity, (current?.count || 0) + qty);
     state.cart[item.name] = {
-        name: item.name,
-        label: item.label,
-        price: item.price,
+        name: catalogItem.name,
+        label: catalogItem.label,
+        price: catalogItem.price,
         count: nextCount,
     };
     renderCart();
@@ -445,8 +509,10 @@ async function checkout() {
     checkoutBtn.textContent = 'Processing...';
 
     const result = await nui('checkout', {
-        method: state.method,
-        cart: cartEntries().map((line) => ({ name: line.name, count: line.count })),
+        method: methodLabels[state.method] ? state.method : 'cash',
+        cart: cartEntries()
+            .filter((line) => state.items.some((item) => item.name === line.name && !item.locked))
+            .map((line) => ({ name: line.name, count: line.count })),
     });
 
     state.busy = false;
@@ -463,15 +529,19 @@ async function checkout() {
 }
 
 function openUi(data) {
+    if (!data || !data.shop || !data.player) return;
+    const allowed = new Set(Object.keys(methodLabels));
     state.shop = data.shop;
-    state.categories = data.categories || [];
-    state.items = data.items || [];
-    state.payments = data.payments || ['cash'];
+    state.categories = Array.isArray(data.categories) ? data.categories : [];
+    state.items = Array.isArray(data.items) ? data.items : [];
+    state.payments = (Array.isArray(data.payments) ? data.payments : ['cash']).filter((method) => allowed.has(method));
+    if (state.payments.length === 0) state.payments = ['cash'];
     state.method = state.payments[0];
     state.category = 'all';
     state.query = '';
     state.cart = {};
-    state.maxQuantity = data.maxQuantity || 25;
+    state.maxQuantity = Math.min(100, Math.max(1, Number(data.maxQuantity) || 25));
+    state.maxCartItems = Math.min(50, Math.max(1, Number(data.maxCartItems) || 20));
     searchEl.value = '';
 
     document.getElementById('shopName').textContent = data.shop.label;
@@ -505,7 +575,9 @@ window.addEventListener('keydown', (event) => {
 });
 
 window.addEventListener('message', (event) => {
-    const { action, data } = event.data || {};
+    const payload = event.data;
+    if (!payload || typeof payload !== 'object') return;
+    const { action, data } = payload;
     if (action === 'open') openUi(data);
     if (action === 'close') {
         app.classList.add('hidden');
@@ -543,6 +615,7 @@ function previewPayload() {
             { name: 'vape_elfbar_mango', label: 'Elfbar Mango', price: 20, category: 'vapes', image: image('elf') },
         ],
         maxQuantity: 25,
+        maxCartItems: 20,
         theme: Object.assign({}, previewThemes['305']),
     };
 }

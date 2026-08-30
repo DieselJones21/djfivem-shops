@@ -11,6 +11,7 @@ shared_scripts {
     '@ox_lib/init.lua',
     'config/config.lua',
     'config/shops.lua',
+    'shared/validate.lua',
     'shared/theme.lua',
 }
 

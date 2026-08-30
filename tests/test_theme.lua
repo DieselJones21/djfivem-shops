@@ -17,6 +17,7 @@ Config = {
     },
 }
 
+dofile('shared/validate.lua')
 dofile('shared/theme.lua')
 
 local function fail(msg)
@@ -54,5 +55,9 @@ local miami = Theme.Build(Config.Theme)
 if miami.preset ~= '305' then fail('305 preset') end
 if miami.logo ~= 'img/the-305.webp' then fail('305 logo') end
 if miami.appName ~= 'The 305' then fail('305 name') end
+
+Config.Theme.Presets['305'].logo = 'https://example.com/x.webp'
+local safe = Theme.Build(Config.Theme)
+if safe.logo ~= 'img/dj-fivem-scripts.webp' then fail('bad logo rejected') end
 
 print('ok')
