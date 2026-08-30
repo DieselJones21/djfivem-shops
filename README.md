@@ -1,6 +1,6 @@
-# djfivem-shops
+# djfivem-305shops
 
-Ped-based shops for **ox_inventory** with config-driven DJ FiveM gradient themes, **cash or bank** checkout (Renewed Banking statements), and **interact** support.
+The 305 branded ped shops for **ox_inventory** with config-driven gradient themes, **cash or bank** checkout (Renewed Banking statements), and **interact** support.
 
 ## Shops
 
@@ -30,7 +30,7 @@ Ammunation firearms require a `weapon` license. Ammo does not. Missing licenses 
 
 ## Install
 
-1. Drop this resource in your server as `djfivem-shops`.
+1. Drop this resource in your server as `djfivem-305shops`.
 2. Add to `server.cfg` **after** inventory, banking, and interact:
 
 ```cfg
@@ -38,7 +38,7 @@ ensure ox_lib
 ensure ox_inventory
 ensure interact
 ensure Renewed-Banking
-ensure djfivem-shops
+ensure djfivem-305shops
 ```
 
 3. Stop **qb-shops** (or any other shop script) so you do not get double peds.
@@ -100,5 +100,5 @@ Images load from `nui://ox_inventory/web/images/`. Change `Config.ImagePath` if 
 
 ```lua
 -- Client
-exports['djfivem-shops']:OpenShop('general', 1)
+exports['djfivem-305shops']:OpenShop('general', 1)
 ```

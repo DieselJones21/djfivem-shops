@@ -22,7 +22,7 @@ function isBrowserPreview() {
 }
 
 function parentResource() {
-    let name = 'djfivem-shops';
+    let name = 'djfivem-305shops';
     try {
         if (typeof GetParentResourceName === 'function') {
             name = GetParentResourceName();
@@ -30,12 +30,12 @@ function parentResource() {
     } catch (e) {
         // FiveM injects this native; ignore if it is not ready yet.
     }
-    if (name === 'djfivem-shops') {
+    if (name === 'djfivem-305shops') {
         const host = String(location.hostname || '');
         const match = host.match(/^cfx-nui-([A-Za-z0-9_-]+)$/i);
         if (match) name = match[1];
     }
-    return /^[A-Za-z0-9_-]{1,64}$/.test(name) ? name : 'djfivem-shops';
+    return /^[A-Za-z0-9_-]{1,64}$/.test(name) ? name : 'djfivem-305shops';
 }
 
 function safeCssColor(value) {

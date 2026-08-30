@@ -101,7 +101,7 @@ local function removeCash(source, amount)
             player.removeMoney(amount)
             return true
         end
-        return player.Functions.RemoveMoney('cash', amount, 'djshops-purchase')
+        return player.Functions.RemoveMoney('cash', amount, 'dj305shops-purchase')
     end
     return exports.ox_inventory:RemoveItem(source, Config.Money.cashItem, amount)
 end
@@ -114,7 +114,7 @@ local function addCash(source, amount)
             player.addMoney(amount)
             return
         end
-        player.Functions.AddMoney('cash', amount, 'djshops-refund')
+        player.Functions.AddMoney('cash', amount, 'dj305shops-refund')
         return
     end
     exports.ox_inventory:AddItem(source, Config.Money.cashItem, amount)
@@ -130,7 +130,7 @@ local function removeBank(source, amount, shopLabel)
         player.removeAccountMoney('bank', amount)
         ok = true
     else
-        ok = player.Functions.RemoveMoney('bank', amount, 'djshops-purchase')
+        ok = player.Functions.RemoveMoney('bank', amount, 'dj305shops-purchase')
     end
 
     if ok and Config.Money.logBankTransactions and GetResourceState('Renewed-Banking') == 'started' then
@@ -158,7 +158,7 @@ local function addBank(source, amount, shopLabel)
     if fw == 'esx' then
         player.addAccountMoney('bank', amount)
     else
-        player.Functions.AddMoney('bank', amount, 'djshops-refund')
+        player.Functions.AddMoney('bank', amount, 'dj305shops-refund')
     end
 
     if Config.Money.logBankTransactions and GetResourceState('Renewed-Banking') == 'started' then
@@ -259,7 +259,7 @@ local function fail(localeKey)
     return { ok = false, error = Config.Locale[localeKey] or Config.Locale.purchase_failed }
 end
 
-lib.callback.register('djshops:openShop', function(source, shopId, locationIndex)
+lib.callback.register('dj305shops:openShop', function(source, shopId, locationIndex)
     if type(source) ~= 'number' or source < 1 then return end
     if not ShopGuard.ShopId(shopId) then return end
 
@@ -404,7 +404,7 @@ local function processCheckout(source, payload)
     }
 end
 
-lib.callback.register('djshops:checkout', function(source, payload)
+lib.callback.register('dj305shops:checkout', function(source, payload)
     if type(source) ~= 'number' or source < 1 then
         return fail('purchase_failed')
     end

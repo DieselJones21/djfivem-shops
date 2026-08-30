@@ -68,7 +68,7 @@ local function openShop(shopId, locationIndex)
 
     opening = true
     local ok, payload = pcall(function()
-        return lib.callback.await('djshops:openShop', false, shopId, locationIndex)
+        return lib.callback.await('dj305shops:openShop', false, shopId, locationIndex)
     end)
     opening = false
     if not ok or not payload then
@@ -102,7 +102,7 @@ end
 
 local function addInteraction(ped, shopId, locationIndex, shop)
     local system = resolveTarget()
-    local id = ('djshops:%s:%s'):format(shopId, locationIndex)
+    local id = ('dj305shops:%s:%s'):format(shopId, locationIndex)
     local label = shop.interactLabel or Config.Locale.interact
 
     if system == 'interact' then
@@ -174,7 +174,7 @@ local function spawnPed(shop, location)
     local hash = joaat(model)
 
     if not lib.requestModel(hash, 10000) then
-        warn(('[djfivem-shops] failed to load ped model %s'):format(model))
+        warn(('[djfivem-305shops] failed to load ped model %s'):format(model))
         return
     end
 
@@ -233,7 +233,7 @@ local function spawnShops()
 
     local system = resolveTarget(15000)
     if GetResourceState(system) ~= 'started' then
-        print(('[djfivem-shops] %s is not started; peds spawned without a target system'):format(system))
+        print(('[djfivem-305shops] %s is not started; peds spawned without a target system'):format(system))
     end
 
     for shopId, shop in pairs(Config.Shops) do
@@ -241,7 +241,7 @@ local function spawnShops()
             for index, location in ipairs(shop.locations) do
                 local ped = spawnPed(shop, location)
                 if ped and DoesEntityExist(ped) then
-                    local id = ('djshops:%s:%s'):format(shopId, index)
+                    local id = ('dj305shops:%s:%s'):format(shopId, index)
                     addInteraction(ped, shopId, index, shop)
                     spawned[#spawned + 1] = {
                         id = id,
@@ -274,7 +274,7 @@ RegisterNUICallback('checkout', function(data, cb)
         return
     end
 
-    local result = lib.callback.await('djshops:checkout', false, {
+    local result = lib.callback.await('dj305shops:checkout', false, {
         shopId = currentShop,
         locationIndex = currentIndex,
         method = method,

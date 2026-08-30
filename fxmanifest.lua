@@ -2,9 +2,9 @@ fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
 
-name 'djfivem-shops'
+name 'djfivem-305shops'
 author 'DieselJones21'
-description 'Ped-based shops for ox_inventory with interact, cash/bank (Renewed Banking), and config-driven themes including The 305'
+description 'The 305 branded ped shops for ox_inventory with interact, cash/bank (Renewed Banking), and config-driven themes'
 version '1.0.0'
 
 shared_scripts {
