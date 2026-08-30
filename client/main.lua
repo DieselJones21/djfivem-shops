@@ -1,5 +1,6 @@
 local spawned = {}
 local uiOpen = false
+local opening = false
 local currentShop, currentIndex
 
 local function notify(description, nType)
@@ -49,11 +50,15 @@ local function closeUi()
 end
 
 local function openShop(shopId, locationIndex)
-    if uiOpen then return end
+    if uiOpen or opening then return end
+    if not ShopGuard.ShopId(shopId) then return end
 
     local shop = Config.Shops[shopId]
-    local location = shop and shop.locations[locationIndex]
-    if not shop or not location then return end
+    if not shop or shop.enabled == false then return end
+
+    locationIndex = ShopGuard.LocationIndex(locationIndex, shop.locations and #shop.locations)
+    local location = locationIndex and shop.locations[locationIndex]
+    if not location then return end
 
     local ped = PlayerPedId()
     if #(GetEntityCoords(ped) - vector3(location.coords.x, location.coords.y, location.coords.z)) > Config.MaxShopDistance then
@@ -61,8 +66,12 @@ local function openShop(shopId, locationIndex)
         return
     end
 
-    local payload = lib.callback.await('djshops:openShop', false, shopId, locationIndex)
-    if not payload then
+    opening = true
+    local ok, payload = pcall(function()
+        return lib.callback.await('dj305shops:openShop', false, shopId, locationIndex)
+    end)
+    opening = false
+    if not ok or not payload then
         notify(Config.Locale.no_access, 'error')
         return
     end
@@ -76,9 +85,24 @@ local function openShop(shopId, locationIndex)
     })
 end
 
+local function sanitizeNuiCart(cart)
+    if type(cart) ~= 'table' then return {} end
+    local clean = {}
+    for i = 1, math.min(#cart, Config.MaxCartItems) do
+        local entry = cart[i]
+        if type(entry) == 'table' and ShopGuard.ItemName(entry.name) then
+            local count = ShopGuard.Quantity(entry.count, Config.MaxQuantity)
+            if count then
+                clean[#clean + 1] = { name = entry.name, count = count }
+            end
+        end
+    end
+    return clean
+end
+
 local function addInteraction(ped, shopId, locationIndex, shop)
     local system = resolveTarget()
-    local id = ('djshops:%s:%s'):format(shopId, locationIndex)
+    local id = ('dj305shops:%s:%s'):format(shopId, locationIndex)
     local label = shop.interactLabel or Config.Locale.interact
 
     if system == 'interact' then
@@ -150,7 +174,7 @@ local function spawnPed(shop, location)
     local hash = joaat(model)
 
     if not lib.requestModel(hash, 10000) then
-        warn(('[djfivem-shops] failed to load ped model %s'):format(model))
+        warn(('[djfivem-305shops] failed to load ped model %s'):format(model))
         return
     end
 
@@ -209,7 +233,7 @@ local function spawnShops()
 
     local system = resolveTarget(15000)
     if GetResourceState(system) ~= 'started' then
-        print(('[djfivem-shops] %s is not started; peds spawned without a target system'):format(system))
+        print(('[djfivem-305shops] %s is not started; peds spawned without a target system'):format(system))
     end
 
     for shopId, shop in pairs(Config.Shops) do
@@ -217,7 +241,7 @@ local function spawnShops()
             for index, location in ipairs(shop.locations) do
                 local ped = spawnPed(shop, location)
                 if ped and DoesEntityExist(ped) then
-                    local id = ('djshops:%s:%s'):format(shopId, index)
+                    local id = ('dj305shops:%s:%s'):format(shopId, index)
                     addInteraction(ped, shopId, index, shop)
                     spawned[#spawned + 1] = {
                         id = id,
@@ -238,16 +262,23 @@ RegisterNUICallback('close', function(_, cb)
 end)
 
 RegisterNUICallback('checkout', function(data, cb)
-    if not uiOpen or not currentShop then
+    if not uiOpen or not currentShop or not currentIndex then
         cb({ ok = false, error = Config.Locale.purchase_failed })
         return
     end
 
-    local result = lib.callback.await('djshops:checkout', false, {
+    local shop = Config.Shops[currentShop]
+    local method = ShopGuard.Method(data and data.method, shop and shop.payments or { 'cash', 'bank' })
+    if not method then
+        cb({ ok = false, error = Config.Locale.purchase_failed })
+        return
+    end
+
+    local result = lib.callback.await('dj305shops:checkout', false, {
         shopId = currentShop,
         locationIndex = currentIndex,
-        method = data and data.method,
-        cart = data and data.cart,
+        method = method,
+        cart = sanitizeNuiCart(data and data.cart),
     })
 
     if result and result.ok then
@@ -283,6 +314,28 @@ CreateThread(function()
     SendNUIMessage({ action = 'close' })
     Wait(1500)
     spawnShops()
+end)
+
+CreateThread(function()
+    while true do
+        if uiOpen and currentShop and currentIndex then
+            local shop = Config.Shops[currentShop]
+            local location = shop and shop.locations and shop.locations[currentIndex]
+            if not location or shop.enabled == false then
+                notify(Config.Locale.too_far, 'error')
+                closeUi()
+            else
+                local coords = location.coords
+                if #(GetEntityCoords(PlayerPedId()) - vector3(coords.x, coords.y, coords.z)) > Config.MaxShopDistance + 1.5 then
+                    notify(Config.Locale.too_far, 'error')
+                    closeUi()
+                end
+            end
+            Wait(400)
+        else
+            Wait(500)
+        end
+    end
 end)
 
 exports('OpenShop', openShop)

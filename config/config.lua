@@ -1,7 +1,7 @@
 Config = {}
 
 -- Resource display name used in the UI header when a shop does not override it.
-Config.ResourceLabel = 'DJ FiveM Scripts'
+Config.ResourceLabel = 'The 305'
 
 -- How players interact with shop peds.
 -- 'interact'  = darktrovx/interact (recommended)
@@ -44,7 +44,8 @@ Config.CloseHint = 'ESC (Close Shop)'
     Shop look. Values are pushed into CSS variables when the UI opens.
 
     `preset` picks a named multi-stop gradient from Config.Theme.Presets.
-    Same presets as djfivem-scriptmanager: chrome | lava | vice | gold | ice | sunset
+    Same presets as djfivem-scriptmanager, plus 305:
+    chrome | lava | vice | gold | ice | sunset | 305
     Leave preset = '' and fill `gradient` yourself for a fully custom blend.
     `inkOnAccent` is the text/icon color sitting on gradient fills
     (use a dark color on chrome/gold, white on neon).
@@ -53,7 +54,7 @@ Config.Theme = {
     appName = 'DJ FiveM',
     appTag = 'Scripts',
     logo = 'img/dj-fivem-scripts.webp',
-    preset = 'chrome', -- chrome | lava | vice | gold | ice | sunset | ''
+    preset = '305', -- chrome | lava | vice | gold | ice | sunset | 305 | ''
 
     gradient = {
         angle = 125,
@@ -98,6 +99,15 @@ Config.Theme = {
             colors = { '#ffe08a', '#ff6a2b', '#e10600', '#6b0030' },
             inkOnAccent = '#ffffff',
             glow = '#ff6a2b',
+        },
+        ['305'] = {
+            angle = 118,
+            colors = { '#ffffff', '#ff9ad4', '#ff2d8a', '#d8d8d8', '#6b1238' },
+            inkOnAccent = '#ffffff',
+            glow = '#ff2d8a',
+            logo = 'img/the-305.webp',
+            appName = 'The 305',
+            appTag = 'Shops',
         },
     },
 
