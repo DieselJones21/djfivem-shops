@@ -56,10 +56,11 @@ function Theme.Build(theme)
     local startColor = grad.colors[1]
     local midColor = grad.colors[math.max(1, math.ceil(#grad.colors / 2))]
     local endColor = grad.colors[#grad.colors]
+    local preset = (theme.Presets and theme.Presets[grad.preset]) or {}
     return {
-        appName = theme.appName or 'DJ FiveM',
-        appTag = theme.appTag or 'Scripts',
-        logo = theme.logo or 'img/dj-fivem-scripts.webp',
+        appName = preset.appName or theme.appName or 'DJ FiveM',
+        appTag = preset.appTag or theme.appTag or 'Scripts',
+        logo = preset.logo or theme.logo or 'img/dj-fivem-scripts.webp',
         preset = grad.preset,
         gradientAngle = grad.angle,
         gradientColors = grad.colors,

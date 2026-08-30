@@ -41,6 +41,9 @@ const previewThemes = {
         onAccent: '#111111',
         glow: '#e8e8e8',
         preset: 'chrome',
+        appName: 'DJ FiveM',
+        appTag: 'Scripts',
+        logo: 'img/dj-fivem-scripts.webp',
     },
     lava: {
         gradientAngle: 90,
@@ -48,6 +51,9 @@ const previewThemes = {
         onAccent: '#ffffff',
         glow: '#e10600',
         preset: 'lava',
+        appName: 'DJ FiveM',
+        appTag: 'Scripts',
+        logo: 'img/dj-fivem-scripts.webp',
     },
     vice: {
         gradientAngle: 110,
@@ -55,6 +61,9 @@ const previewThemes = {
         onAccent: '#ffffff',
         glow: '#7a5cff',
         preset: 'vice',
+        appName: 'DJ FiveM',
+        appTag: 'Scripts',
+        logo: 'img/dj-fivem-scripts.webp',
     },
     gold: {
         gradientAngle: 120,
@@ -62,6 +71,9 @@ const previewThemes = {
         onAccent: '#1a1204',
         glow: '#f5c542',
         preset: 'gold',
+        appName: 'DJ FiveM',
+        appTag: 'Scripts',
+        logo: 'img/dj-fivem-scripts.webp',
     },
     ice: {
         gradientAngle: 100,
@@ -69,6 +81,9 @@ const previewThemes = {
         onAccent: '#ffffff',
         glow: '#5ad0ff',
         preset: 'ice',
+        appName: 'DJ FiveM',
+        appTag: 'Scripts',
+        logo: 'img/dj-fivem-scripts.webp',
     },
     sunset: {
         gradientAngle: 95,
@@ -76,6 +91,19 @@ const previewThemes = {
         onAccent: '#ffffff',
         glow: '#ff6a2b',
         preset: 'sunset',
+        appName: 'DJ FiveM',
+        appTag: 'Scripts',
+        logo: 'img/dj-fivem-scripts.webp',
+    },
+    '305': {
+        gradientAngle: 118,
+        gradientColors: ['#ffffff', '#ff9ad4', '#ff2d8a', '#d8d8d8', '#6b1238'],
+        onAccent: '#ffffff',
+        glow: '#ff2d8a',
+        preset: '305',
+        appName: 'The 305',
+        appTag: 'Shops',
+        logo: 'img/the-305.webp',
     },
 };
 
@@ -131,9 +159,16 @@ function applyTheme(theme) {
     root.setProperty('--accent-rgb', g.rgb);
     root.setProperty('--on-accent', g.ink);
     root.setProperty('--glow', `0 0 18px rgba(${g.rgb}, 0.28)`);
+    if (theme.logo) {
+        root.setProperty('--brand-logo', `url("${theme.logo}")`);
+    }
+    document.documentElement.setAttribute('data-theme', theme.preset || 'custom');
 
     const logo = document.getElementById('brandLogo');
-    if (logo && theme.logo) logo.src = theme.logo;
+    if (logo && theme.logo) {
+        logo.src = theme.logo;
+        logo.alt = [theme.appName, theme.appTag].filter(Boolean).join(' ') || 'Shop';
+    }
 
     const footer = document.getElementById('footerBrand');
     if (footer && (theme.appName || theme.appTag)) {
@@ -442,7 +477,7 @@ function openUi(data) {
     document.getElementById('shopName').textContent = data.shop.label;
     document.getElementById('shopSubtitle').textContent = data.shop.location || data.shop.subtitle || 'Store';
     document.getElementById('closeHint').textContent = data.closeHint || 'ESC (Close Shop)';
-    document.getElementById('footerBrand').textContent = data.resourceLabel || 'DJ FiveM Scripts';
+    document.getElementById('footerBrand').textContent = data.resourceLabel || 'The 305';
     applyTheme(data.theme);
 
     setPlayer(data.player);
@@ -488,7 +523,7 @@ function previewPayload() {
 
     return {
         shop: { label: '24/7', subtitle: 'Supermarket', location: 'Innocence Blvd' },
-        resourceLabel: 'DJ FiveM Scripts',
+        resourceLabel: 'The 305',
         closeHint: 'ESC (Close Shop)',
         payments: ['cash', 'bank'],
         player: { name: 'Alex Reyes', cash: 3510, bank: 12450 },
@@ -508,11 +543,7 @@ function previewPayload() {
             { name: 'vape_elfbar_mango', label: 'Elfbar Mango', price: 20, category: 'vapes', image: image('elf') },
         ],
         maxQuantity: 25,
-        theme: Object.assign({
-            appName: 'DJ FiveM',
-            appTag: 'Scripts',
-            logo: 'img/dj-fivem-scripts.webp',
-        }, previewThemes.chrome),
+        theme: Object.assign({}, previewThemes['305']),
     };
 }
 
@@ -523,11 +554,7 @@ if (isBrowserPreview()) {
     document.getElementById('previewBar').addEventListener('click', (event) => {
         const btn = event.target.closest('[data-preview]');
         if (!btn) return;
-        const next = Object.assign({}, previewThemes[btn.dataset.preview]);
-        next.appName = 'DJ FiveM';
-        next.appTag = 'Scripts';
-        next.logo = 'img/dj-fivem-scripts.webp';
-        applyTheme(next);
+        applyTheme(Object.assign({}, previewThemes[btn.dataset.preview]));
     });
     openUi(previewPayload());
 }
