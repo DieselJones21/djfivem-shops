@@ -32,21 +32,30 @@ function Theme.ResolveGradient(theme)
     local colors = grad.colors or { grad.ember, grad.accent, grad.crimson }
     local cleaned = {}
     for i = 1, #(colors or {}) do
-        if type(colors[i]) == 'string' and colors[i] ~= '' then
-            cleaned[#cleaned + 1] = colors[i]
+        local color = ShopGuard and ShopGuard.SafeColor(colors[i]) or colors[i]
+        if type(color) == 'string' and color ~= '' then
+            cleaned[#cleaned + 1] = color
         end
     end
     if #cleaned == 0 then
         cleaned = { '#ffffff', '#8a8a8a', '#3a3a3a' }
     end
-    local glow = grad.glow or cleaned[math.max(1, math.ceil(#cleaned / 2))]
+    local glow = (ShopGuard and ShopGuard.SafeColor(grad.glow)) or cleaned[math.max(1, math.ceil(#cleaned / 2))]
+    local ink = (ShopGuard and ShopGuard.SafeColor(grad.inkOnAccent)) or '#ffffff'
     return {
-        angle = grad.angle or 90,
+        angle = tonumber(grad.angle) or 90,
         colors = cleaned,
-        inkOnAccent = grad.inkOnAccent or '#ffffff',
+        inkOnAccent = ink,
         glow = glow,
         preset = (type(name) == 'string' and name ~= '') and name or 'custom',
     }
+end
+
+local function paint(value, fallback)
+    if ShopGuard then
+        return ShopGuard.SafeColor(value) or fallback
+    end
+    return value or fallback
 end
 
 function Theme.Build(theme)
@@ -56,10 +65,16 @@ function Theme.Build(theme)
     local startColor = grad.colors[1]
     local midColor = grad.colors[math.max(1, math.ceil(#grad.colors / 2))]
     local endColor = grad.colors[#grad.colors]
+    local preset = (theme.Presets and theme.Presets[grad.preset]) or {}
+    local logo = preset.logo or theme.logo or 'img/dj-fivem-scripts.webp'
+    if ShopGuard then
+        logo = ShopGuard.SafeLogo(logo)
+    end
+    local label = ShopGuard and ShopGuard.Label or function(v, f) return v or f end
     return {
-        appName = theme.appName or 'DJ FiveM',
-        appTag = theme.appTag or 'Scripts',
-        logo = theme.logo or 'img/dj-fivem-scripts.webp',
+        appName = label(preset.appName or theme.appName, 'DJ FiveM'),
+        appTag = label(preset.appTag or theme.appTag, 'Scripts'),
+        logo = logo,
         preset = grad.preset,
         gradientAngle = grad.angle,
         gradientColors = grad.colors,
@@ -69,21 +84,20 @@ function Theme.Build(theme)
         accentHot = startColor,
         ember = startColor,
         crimson = endColor,
-        ink = theme.ink,
-        muted = theme.muted,
-        screen = theme.screen,
-        paper = theme.paper,
-        wash = theme.wash,
-        panel = theme.panel,
-        card = theme.card,
-        card2 = theme.card2,
-        line = theme.line,
-        bezelTop = theme.bezelTop,
-        bezelMid = theme.bezelMid,
-        bezelBottom = theme.bezelBottom,
+        ink = paint(theme.ink, '#f5f5f5'),
+        muted = paint(theme.muted, '#8a8a8a'),
+        screen = paint(theme.screen, '#0b0b0b'),
+        paper = paint(theme.paper, '#161616'),
+        wash = paint(theme.wash, '#101010'),
+        panel = paint(theme.panel, '#141414'),
+        card = paint(theme.card, '#1a1a1a'),
+        card2 = paint(theme.card2, '#202020'),
+        line = paint(theme.line, 'rgba(255, 255, 255, 0.08)'),
+        bezelTop = paint(theme.bezelTop, '#2a2a2a'),
+        bezelMid = paint(theme.bezelMid, '#141414'),
+        bezelBottom = paint(theme.bezelBottom, '#0a0a0a'),
         accentRgb = ('%s, %s, %s'):format(r, g, b),
         accentFill = Theme.LinearGradient(grad.angle, grad.colors),
         accentFillV = Theme.LinearGradient(180, grad.colors),
-        presets = theme.Presets,
     }
 end

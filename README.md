@@ -52,10 +52,14 @@ ensure djfivem-shops
 Same `Config.Theme` system as **djfivem-scriptmanager**. Pick a preset:
 
 ```lua
-Config.Theme.preset = 'chrome' -- chrome | lava | vice | gold | ice | sunset
+Config.Theme.preset = '305' -- 305 | chrome | lava | vice | gold | ice | sunset
 ```
 
 Leave `preset = ''` and fill `Config.Theme.gradient` for a custom blend (`colors`, `angle`, `inkOnAccent`, `glow`). The NUI applies those values as CSS variables when a shop opens.
+
+The **305** preset swaps in The 305 magenta/chrome logo and header branding automatically. Other presets keep the DJ FiveM Scripts mark.
+
+Checkout is server-authoritative. The NUI only sends item names, counts, and a payment method. Prices, licenses, stock, and allowed payments always come from `config/shops.lua`. Duplicate cart lines are merged and capped, and the shop closes if the player walks away.
 
 ## Payments
 

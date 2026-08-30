@@ -255,10 +255,19 @@ local function buildCatalog(shop, player, fw)
     return categories, items
 end
 
+local function fail(localeKey)
+    return { ok = false, error = Config.Locale[localeKey] or Config.Locale.purchase_failed }
+end
+
 lib.callback.register('djshops:openShop', function(source, shopId, locationIndex)
+    if type(source) ~= 'number' or source < 1 then return end
+    if not ShopGuard.ShopId(shopId) then return end
+
     local shop = Config.Shops[shopId]
     if not shop or shop.enabled == false then return end
-    if not isNearShop(source, shop, locationIndex) then return end
+
+    locationIndex = ShopGuard.LocationIndex(locationIndex, shop.locations and #shop.locations)
+    if not locationIndex or not isNearShop(source, shop, locationIndex) then return end
 
     local player, fw = getPlayer(source)
     local location = shop.locations[locationIndex]
@@ -283,6 +292,7 @@ lib.callback.register('djshops:openShop', function(source, shopId, locationIndex
         categories = categories,
         items = items,
         maxQuantity = Config.MaxQuantity,
+        maxCartItems = Config.MaxCartItems,
         closeHint = Config.CloseHint,
         resourceLabel = Config.ResourceLabel,
         theme = Theme.Build(Config.Theme),
@@ -290,137 +300,95 @@ lib.callback.register('djshops:openShop', function(source, shopId, locationIndex
 end)
 
 local lastCheckout = {}
+local checkoutLock = {}
 
-lib.callback.register('djshops:checkout', function(source, payload)
+local function processCheckout(source, payload)
     if type(payload) ~= 'table' then
-        return { ok = false, error = Config.Locale.purchase_failed }
+        return fail('purchase_failed')
     end
 
-    local now = GetGameTimer()
-    if lastCheckout[source] and now - lastCheckout[source] < 750 then
-        return { ok = false, error = Config.Locale.purchase_failed }
+    if not ShopGuard.ShopId(payload.shopId) then
+        return fail('purchase_failed')
     end
-    lastCheckout[source] = now
 
     local shop = Config.Shops[payload.shopId]
     if not shop or shop.enabled == false then
-        return { ok = false, error = Config.Locale.purchase_failed }
+        return fail('purchase_failed')
     end
 
-    if not isNearShop(source, shop, payload.locationIndex) then
-        return { ok = false, error = Config.Locale.too_far }
+    local locationIndex = ShopGuard.LocationIndex(payload.locationIndex, shop.locations and #shop.locations)
+    if not locationIndex or not isNearShop(source, shop, locationIndex) then
+        return fail('too_far')
     end
 
-    local method = payload.method
-    local allowed = shop.payments or { 'cash', 'bank' }
-    local methodOk = false
-    for i = 1, #allowed do
-        if allowed[i] == method then
-            methodOk = true
-            break
-        end
-    end
-    if not methodOk then
-        return { ok = false, error = Config.Locale.purchase_failed }
+    local method = ShopGuard.Method(payload.method, shop.payments or { 'cash', 'bank' })
+    if not method then
+        return fail('purchase_failed')
     end
 
-    local cart = payload.cart
-    if type(cart) ~= 'table' or #cart == 0 then
-        return { ok = false, error = Config.Locale.empty_cart }
-    end
-    if #cart > Config.MaxCartItems then
-        return { ok = false, error = Config.Locale.purchase_failed }
+    local built, err = ShopGuard.BuildOrder(payload.cart, shopItemMap(shop), Config.MaxQuantity, Config.MaxCartItems)
+    if not built then
+        return fail(err)
     end
 
-    local catalog = shopItemMap(shop)
     local player, fw = getPlayer(source)
-    local total = 0
-    local order = {}
+    local order = built.order
+    local total = built.total
 
-    for i = 1, #cart do
-        local entry = cart[i]
-        if type(entry) ~= 'table' or type(entry.name) ~= 'string' then
-            return { ok = false, error = Config.Locale.invalid_item }
+    for i = 1, #order do
+        local line = order[i]
+        if not oxItem(line.name) then
+            return fail('missing_item_def')
         end
-
-        local count = math.floor(tonumber(entry.count) or 0)
-        if count < 1 or count > Config.MaxQuantity then
-            return { ok = false, error = Config.Locale.purchase_failed }
+        if line.license and not hasLicense(player, fw, line.license) then
+            return fail('missing_license')
         end
-
-        local product = catalog[entry.name]
-        if not product then
-            return { ok = false, error = Config.Locale.invalid_item }
+        if not exports.ox_inventory:CanCarryItem(source, line.name, line.count, line.metadata) then
+            return fail('cannot_carry')
         end
-
-        local data = oxItem(product.name)
-        if not data then
-            return { ok = false, error = Config.Locale.missing_item_def }
-        end
-
-        if product.license and not hasLicense(player, fw, product.license) then
-            return { ok = false, error = Config.Locale.missing_license }
-        end
-
-        if not exports.ox_inventory:CanCarryItem(source, product.name, count, product.metadata) then
-            return { ok = false, error = Config.Locale.cannot_carry }
-        end
-
-        total = total + (product.price * count)
-        order[#order + 1] = {
-            name = product.name,
-            count = count,
-            metadata = product.metadata,
-        }
-    end
-
-    if total <= 0 then
-        return { ok = false, error = Config.Locale.purchase_failed }
     end
 
     if method == 'cash' then
-        if getCash(source) < total then
-            return { ok = false, error = Config.Locale.not_enough_cash }
-        end
-        if not removeCash(source, total) then
-            return { ok = false, error = Config.Locale.not_enough_cash }
+        if getCash(source) < total or not removeCash(source, total) then
+            return fail('not_enough_cash')
         end
     elseif method == 'bank' then
-        if getBank(source) < total then
-            return { ok = false, error = Config.Locale.not_enough_bank }
-        end
-        if not removeBank(source, total, shop.label) then
-            return { ok = false, error = Config.Locale.not_enough_bank }
-        end
-    elseif method == 'black_money' then
-        if getBlackMoney(source) < total then
-            return { ok = false, error = Config.Locale.not_enough_black }
-        end
-        if not removeBlack(source, total) then
-            return { ok = false, error = Config.Locale.not_enough_black }
+        if getBank(source) < total or not removeBank(source, total, shop.label) then
+            return fail('not_enough_bank')
         end
     else
-        return { ok = false, error = Config.Locale.purchase_failed }
+        if getBlackMoney(source) < total or not removeBlack(source, total) then
+            return fail('not_enough_black')
+        end
     end
 
     local given = {}
-    for i = 1, #order do
-        local line = order[i]
-        local success = exports.ox_inventory:AddItem(source, line.name, line.count, line.metadata)
-        if not success then
-            for g = 1, #given do
-                exports.ox_inventory:RemoveItem(source, given[g].name, given[g].count, given[g].metadata)
-            end
-            if method == 'cash' then
-                addCash(source, total)
-            elseif method == 'bank' then
-                addBank(source, total, shop.label)
-            else
-                addBlack(source, total)
-            end
-            return { ok = false, error = Config.Locale.cannot_carry }
+    local function refund()
+        for g = 1, #given do
+            exports.ox_inventory:RemoveItem(source, given[g].name, given[g].count, given[g].metadata)
         end
-        given[#given + 1] = line
+        if method == 'cash' then
+            addCash(source, total)
+        elseif method == 'bank' then
+            addBank(source, total, shop.label)
+        else
+            addBlack(source, total)
+        end
+    end
+
+    local added, addErr = pcall(function()
+        for i = 1, #order do
+            local line = order[i]
+            local success = exports.ox_inventory:AddItem(source, line.name, line.count, line.metadata)
+            if not success then
+                error('carry')
+            end
+            given[#given + 1] = line
+        end
+    end)
+    if not added then
+        refund()
+        return fail('cannot_carry')
     end
 
     return {
@@ -434,8 +402,32 @@ lib.callback.register('djshops:checkout', function(source, payload)
             black = getBlackMoney(source),
         },
     }
+end
+
+lib.callback.register('djshops:checkout', function(source, payload)
+    if type(source) ~= 'number' or source < 1 then
+        return fail('purchase_failed')
+    end
+    if checkoutLock[source] then
+        return fail('purchase_failed')
+    end
+
+    local now = GetGameTimer()
+    if lastCheckout[source] and now - lastCheckout[source] < 750 then
+        return fail('purchase_failed')
+    end
+    lastCheckout[source] = now
+    checkoutLock[source] = true
+
+    local ok, result = pcall(processCheckout, source, payload)
+    checkoutLock[source] = nil
+    if not ok then
+        return fail('purchase_failed')
+    end
+    return result
 end)
 
 AddEventHandler('playerDropped', function()
     lastCheckout[source] = nil
+    checkoutLock[source] = nil
 end)

@@ -17,6 +17,7 @@ Config = {
     },
 }
 
+dofile('shared/validate.lua')
 dofile('shared/theme.lua')
 
 local function fail(msg)
@@ -39,5 +40,24 @@ Config.Theme.preset = ''
 local custom = Theme.Build(Config.Theme)
 if custom.preset ~= 'custom' then fail('custom preset') end
 if custom.accentFill:find('#111111', 1, true) == nil then fail('custom color') end
+
+Config.Theme.preset = '305'
+Config.Theme.Presets['305'] = {
+    angle = 118,
+    colors = { '#ffffff', '#ff2d8a', '#6b1238' },
+    inkOnAccent = '#ffffff',
+    glow = '#ff2d8a',
+    logo = 'img/the-305.webp',
+    appName = 'The 305',
+    appTag = 'Shops',
+}
+local miami = Theme.Build(Config.Theme)
+if miami.preset ~= '305' then fail('305 preset') end
+if miami.logo ~= 'img/the-305.webp' then fail('305 logo') end
+if miami.appName ~= 'The 305' then fail('305 name') end
+
+Config.Theme.Presets['305'].logo = 'https://example.com/x.webp'
+local safe = Theme.Build(Config.Theme)
+if safe.logo ~= 'img/dj-fivem-scripts.webp' then fail('bad logo rejected') end
 
 print('ok')

@@ -4,13 +4,14 @@ lua54 'yes'
 
 name 'djfivem-shops'
 author 'DieselJones21'
-description 'Ped-based shops for ox_inventory with interact, cash/bank (Renewed Banking), and config-driven DJ FiveM themes'
+description 'Ped-based shops for ox_inventory with interact, cash/bank (Renewed Banking), and config-driven themes including The 305'
 version '1.0.0'
 
 shared_scripts {
     '@ox_lib/init.lua',
     'config/config.lua',
     'config/shops.lua',
+    'shared/validate.lua',
     'shared/theme.lua',
 }
 
@@ -29,6 +30,7 @@ files {
     'html/style.css',
     'html/app.js',
     'html/img/dj-fivem-scripts.webp',
+    'html/img/the-305.webp',
 }
 
 dependencies {
